@@ -1,7 +1,7 @@
 MeshFlow
 ========
 
-.. figure:: _static/meshflow_overview.svg
+.. figure:: /_static/duck_distrib.svg
    :align: center
 
    Visual representation of MeshFlow. Noise samples, :math:`\mathbf{p}_i`, are displaced via our :math:`K`-step exponential map according to the directions dictated by our learnable static vector field, :math:`\mathbf{v}_\theta`. The end-points, :math:`\hat{\mathbf{q}}_i`, are compared with the OT-coupled training samples, :math:`\mathbf{q}_{\sigma(i)}`, using a squared biharmonic distance function :math:`d_{BH}^2`.
