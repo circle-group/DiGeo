@@ -7,7 +7,7 @@ Dependencies
 ------------
 * Python >= 3.10
 * PyTorch >= 2.0 *(Note: Must be installed with CUDA support if using a GPU)*
-* NumPy, SciPy, Trimesh, Robust Laplacian
+* NumPy, tqdm, SciPy, Trimesh, Robust Laplacian
 
 Install via pip
 ---------------
