@@ -1,0 +1,176 @@
+name: Release to PyPI
+
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build-package:
+    name: Build package
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip setuptools wheel build cibuildwheel
+
+    - name: Build Linux Wheels
+      if: runner.os == 'Linux'
+      run: cibuildwheel --output-dir dist
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        CIBW_ARCHS_LINUX: "auto"
+        CIBW_SKIP: "*musl*"
+        CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
+          auditwheel repair -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10*
+
+        # Only download and install CUDA on Intel (X64) runners
+        CIBW_BEFORE_ALL: >
+          if [ "${{ runner.arch }}" = "X64" ]; then
+            if command -v dnf >/dev/null 2>&1; then
+              dnf install -y dnf-plugins-core &&
+              dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo &&
+              dnf clean all &&
+              dnf -y install cuda-toolkit-12-8;
+            else
+              yum install -y yum-utils &&
+              yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo &&
+              yum clean all &&
+              yum -y install cuda-toolkit-12-8;
+            fi &&
+            /usr/local/cuda-12.8/bin/nvcc --version;
+          else
+            echo "ARM64 architecture detected. Skipping CUDA toolkit installation.";
+          fi
+
+        # Dynamically toggle USE_CUDA based on runner hardware, and add CUDA_HOME
+        CIBW_ENVIRONMENT: >
+          USE_CUDA=${{ runner.arch == 'X64' && '1' || '0' }}
+          CUDA_HOME=/usr/local/cuda-12.8
+          PATH=$PATH:/usr/local/cuda-12.8/bin
+          TORCH_CUDA_ARCH_LIST='7.5;8.0;8.6;8.9;9.0+PTX'
+
+    - name: Build macOS CPU Wheels
+      if: runner.os == 'macOS'
+      run: cibuildwheel --output-dir dist
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        CIBW_ARCHS_MACOS: "x86_64 arm64"
+        CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
+          delocate-wheel -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10* --ignore-missing-dependencies
+        CIBW_ENVIRONMENT: "USE_CUDA=0"
+
+    - name: Build Windows CPU Wheels
+      if: runner.os == 'Windows'
+      run: cibuildwheel --output-dir dist
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        CIBW_ARCHS_WINDOWS: "auto"
+        CIBW_BEFORE_BUILD: "pip install ninja"
+        CIBW_ENVIRONMENT: "USE_CUDA=0"
+
+    - name: Upload dist artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: python-package-${{ matrix.os }}
+        path: dist/*
+
+  publish-to-pypi:
+    name: Publish package on PyPI
+    needs: build-package
+    runs-on: ubuntu-latest
+    # Only run when the ref is a tag pushed (push event with tags)
+    if: ${{ startsWith(github.ref, 'refs/tags') }}
+    environment:
+      name: pypi
+      url: https://pypi.org/p/digeo/
+    permissions:
+      id-token: write
+    steps:
+    - name: Wait for all tests to succeed
+      uses: fountainhead/action-wait-for-check@v1.2.0
+      id: wait-for-tests
+      with:
+        token: ${{ github.token }}
+        checkName: report_test
+        timeoutSeconds: 1600  # timeout after 30min
+        intervalSeconds: 30  # check every 30sec
+        ref: ${{ github.sha }}
+    - name: Download dist artifacts
+      uses: actions/download-artifact@v7
+      with:
+        pattern: python-package-*
+        merge-multiple: true
+        path: dist
+    - name: Publish distribution to PyPI
+      if: ${{ success() && steps.wait-for-tests.outputs.conclusion == 'success' }}
+      uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    name: >-
+      Sign the distribution with Sigstore
+      and upload them to GitHub Release
+    needs:
+    - publish-to-pypi
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Download all the dists
+      uses: actions/download-artifact@v7
+      with:
+        pattern: python-package-*
+        merge-multiple: true
+        path: dist
+
+    - name: Build sdist
+      run: pipx run build --sdist --outdir dist
+
+    - name: Verify dist folder
+      run: ls -al dist/
+
+    - name: Sign the dists with Sigstore
+      uses: sigstore/gh-action-sigstore-python@v3.2.0
+      with:
+        inputs: >-
+          ./dist/*.tar.gz
+          ./dist/*.whl
+
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        gh release create
+        "$GITHUB_REF_NAME"
+        --repo "$GITHUB_REPOSITORY"
+        --notes ""
+
+    - name: Upload artifact signatures to GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      # Upload to GitHub Release using the `gh` CLI.
+      # `dist/` contains the built packages, and the
+      # sigstore-produced signatures and certificates.
+      run: >-
+        gh release upload
+        "$GITHUB_REF_NAME" dist/**
+        --repo "$GITHUB_REPOSITORY"

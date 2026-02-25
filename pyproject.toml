@@ -1,0 +1,80 @@
+[build-system]
+# Require setuptools and torch up front so they are available to build the extension
+requires = ["setuptools>=77.0.3", "torch"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "digeo"
+dynamic = ["version"]
+authors = [{name = "Hippolyte Verninas"}]
+license = "BSD-3-Clause"
+description = "A library for differentiable geometry."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "numpy",
+    "trimesh",
+    "scipy",
+    "robust_laplacian",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "potpourri3d"
+]
+doc = [
+    "sphinx",
+    "sphinx-autodoc-typehints",
+    "pydata_sphinx_theme",
+    "sphinx-design",
+    "sphinx-remove-toctrees"
+]
+
+
+[tool.setuptools.dynamic]
+version = {attr = "digeo.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.cibuildwheel]
+skip = ["*cp314t*"]
+build = [
+    # Linux manylinux wheels
+    "cp310-manylinux_*",
+    "cp311-manylinux_*",
+    "cp312-manylinux_*",
+    "cp313-manylinux_*",
+    "cp314-manylinux_*",
+
+    # macOS wheels
+    "cp310-macosx_*",
+    "cp311-macosx_*",
+    "cp312-macosx_*",
+    "cp313-macosx_*",
+    "cp314-macosx_*",
+
+    # Windows wheels
+    "cp310-win_amd64",
+    "cp311-win_amd64",
+    "cp312-win_amd64",
+    "cp313-win_amd64",
+    "cp314-win_amd64"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+select = ["E", "F"]

@@ -1,0 +1,47 @@
+name: tests
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip setuptools wheel build torch numpy
+        python3 -m pip install --no-build-isolation -e .[test]
+    - name: Test with pytest
+      run: |
+        pytest -v
+
+  report_test:
+    if: ${{ always() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      TEST_BENCHOPT: ${{ needs.test.result }}
+
+    steps:
+      - name: "Gather test results."
+        run: |
+          if [[ $TEST_BENCHOPT == 'success' ]]; then
+            exit 0;
+          else
+            exit 1;
+          fi
+        shell: bash
