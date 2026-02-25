@@ -14,3 +14,4 @@ DiGeo
    install
    user_guide/index
    api
+   examples
