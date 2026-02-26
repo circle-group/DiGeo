@@ -29,4 +29,4 @@ You will need to build the package from source if you want to use the latest dev
 
 .. code-block:: bash
 
-    pip install --no-build-isolation -e "git+ssh://git@github.com/circle-group/DiGeo.git"
+    pip install --no-build-isolation -e digeo@"git+ssh://git@github.com/circle-group/DiGeo.git"
