@@ -1,0 +1,7 @@
+/* Custom width for the left navigation sidebar */
+@media (min-width: 960px) {
+  .bd-sidebar-primary {
+    width: 20%;
+    min-width: 16rem;
+  }
+}

@@ -1,5 +1,5 @@
-Shape segmentation using AGC
-============================
+Shape segmentation
+==================
 
 .. figure:: /_static/agc_seg.png
     :align: center

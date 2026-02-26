@@ -1,5 +1,5 @@
-Geodesic Centroidal Voronoi Tessellation
-========================================
+Voronoi Tessellation
+====================
 
 This example demonstrates how to perform **Geodesic Centroidal Voronoi Tessellation (GCVT)** on 3D meshes using the ``Mesh-LBFGS`` second-order optimizer provided by this library.
 
@@ -16,11 +16,11 @@ Our implementation leverages **Mesh-LBFGS**, the second-order Riemannian optimiz
 Mathematical Formulation
 ------------------------
 
-To find the optimal seed positions, we minimize the following energy function:
+To find the optimal seed positions, we minimize the following loss function:
 
 .. math::
 
-   E(\mathcal{S}) = \frac{1}{2S} \sum_{i=1}^{S} \sum_{x \in \Omega_{i}} A(x)\rho(x)\|Log_{s_{i}}(x)\|^{2}
+   \mathcal{L}(\mathcal{S}) = \frac{1}{2S} \sum_{i=1}^{S} \sum_{x \in \Omega_{i}} A(x)\rho(x)\|Log_{s_{i}}(x)\|^{2}
 
 Where:
 
@@ -29,6 +29,8 @@ Where:
 - :math:`\rho(x)`: A density function defined via the scalar heat kernel.
 
 - :math:`Log_{s_i}(x)`: The Riemannian logarithm map finding the shortest vector from seed :math:`s_i` to vertex :math:`x`.
+
+In practice, we compute the Log map at each seed, and compute a Karcher mean for each Voronoi cell using the Vector Heat Solver provided by the Potpourri3D library. This Karcher mean gives us the direction in which to move each seed, which gives us the gradient of the loss function with respect to the seed positions. We can then use Mesh-LBFGS to optimize the seed positions iteratively until convergence.
 
 Optimization via Mesh-LBFGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
