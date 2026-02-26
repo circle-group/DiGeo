@@ -56,7 +56,6 @@ def mesh_lbfgs(
             curr_grad=grad,
             alpha_init=lr,
             use_wolfe=True,
-            return_info=True,
         )
 
         total_function_calls += c
