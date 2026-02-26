@@ -9,3 +9,4 @@ Examples
 
     meshflow
     segmentation
+    gcvt
