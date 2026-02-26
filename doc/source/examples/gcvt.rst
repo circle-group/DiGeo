@@ -24,21 +24,54 @@ To find the optimal seed positions, we minimize the following energy function:
 
 Where:
 
-- **:math:`A(x)`**: The vertex area, defined as one-third of the sum of areas of triangles connected to vertex :math:`x`.
+- :math:`A(x)`: The vertex area, defined as one-third of the sum of areas of triangles connected to vertex :math:`x`.
 
-- **:math:`\rho(x)`**: A density function defined via the scalar heat kernel.
+- :math:`\rho(x)`: A density function defined via the scalar heat kernel.
 
-- **:math:`Log_{s_i}(x)`**: The Riemannian logarithm map finding the shortest vector from seed :math:`s_i` to vertex :math:`x`.
+- :math:`Log_{s_i}(x)`: The Riemannian logarithm map finding the shortest vector from seed :math:`s_i` to vertex :math:`x`.
 
 Optimization via Mesh-LBFGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We first define the loss function used for optimization, which computes the energy and its gradient with respect to the seed positions.
 
-.. code::
+.. code-block:: python
+
+    from digeo.optim import MeshLossFunc
+    from digeo import Mesh, MeshPointBatch
+    import potpourri3d as pp3d
+
     class LossGCVT(MeshLossFunc):
+        def __init__(self, mesh: Mesh):
+            super().__init__()
+            self.solver = pp3d.MeshVectorHeatSolver(
+                mesh.positions.detach().cpu().numpy(),
+                mesh.triangles.detach().cpu().numpy(),
+                t_coef=0.25,
+            )
+            self.regions = None
 
+        def compute(self, mesh: Mesh, x: MeshPointBatch):
+            grad, regions, loss = get_karcher_mean(self.solver, mesh, x)
+            self.regions = regions
+            return loss, grad
 
+        def get_logs(self):
+            return {"regions": self.regions}
+
+Once the loss function is defined, we can initialize the seed positions and run the optimization loop using Mesh-LBFGS.
+
+.. code-block:: python
+
+    from digeo import load_mesh_from_file
+    from digeo.ops import uniform_sampling
+    from digeo.optim import mesh_lbfgs
+
+    mesh = load_mesh_from_file("path/to/mesh.obj")
+    initial_seeds = uniform_sampling(mesh, num_samples=50)
+    loss_func = LossGCVT(mesh)
+
+    seeds, logs = mesh_lbfgs(mesh, initial_seeds, loss_func)
 
 
 The full implementation of the GCVT example is available on the `GCVT GitHub repository <https://github.com/Etyl/GCVT>`_
