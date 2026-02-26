@@ -9,7 +9,7 @@ from digeo.optim.utils import MeshLossFunc, line_search
 
 def mesh_lbfgs(
     mesh: Mesh,
-    x0: MeshPointBatch,
+    x: MeshPointBatch,
     loss_func: MeshLossFunc,
     max_iter: int = 100,
     list_size: int = 20,
@@ -22,7 +22,6 @@ def mesh_lbfgs(
     """
     Mesh-LBFGS optimizer with early stopping.
     """
-    x = x0
     loss, grad = loss_func(mesh, x)
 
     H_diag = 1.0
