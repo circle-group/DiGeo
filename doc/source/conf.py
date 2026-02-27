@@ -12,8 +12,8 @@ sys.path.insert(0, os.path.abspath('../../src/'))
 from digeo import __version__ as digeo_version
 
 project = 'DiGeo'
-copyright = '2026, .'
-author = '.'
+copyright = '2026, DiGeo Developers'
+author = 'DiGeo Developers'
 release = digeo_version
 
 autodoc_mock_imports = ["digeo.ops.cuda"]

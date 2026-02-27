@@ -6,7 +6,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "digeo"
 dynamic = ["version"]
-authors = [{name = "Hippolyte Verninas"}]
+maintainers = [
+    {name = "digeo developpers"},
+]
 license = "BSD-3-Clause"
 description = "A library for differentiable geometry."
 readme = "README.md"
