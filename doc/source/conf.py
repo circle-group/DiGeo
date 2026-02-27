@@ -9,10 +9,12 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../src/'))
+from digeo import __version__ as digeo_version
 
 project = 'DiGeo'
 copyright = '2026, .'
 author = '.'
+release = digeo_version
 
 autodoc_mock_imports = ["digeo.ops.cuda"]
 
