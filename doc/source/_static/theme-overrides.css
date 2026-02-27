@@ -1,0 +1,21 @@
+/* Custom width for the left navigation sidebar */
+@media (min-width: 960px) {
+  .bd-sidebar-primary {
+    width: 20%;
+    min-width: 16rem;
+  }
+}
+
+.bd-article-container {
+  max-width: 80rem !important;
+}
+
+.sd-card .sd-card-title {
+  font-size: 1.5rem !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+  font-weight: 700 !important;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
