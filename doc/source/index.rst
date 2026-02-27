@@ -1,12 +1,8 @@
-.. digeo documentation master file, created by
-   sphinx-quickstart on Thu Feb 19 22:29:21 2026.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+:html_theme.sidebar_secondary.remove:
+
 
 DiGeo
 =====
-
-.. TODO: add images and cool stuff on home page
 
 .. toctree::
    :hidden:
@@ -15,3 +11,41 @@ DiGeo
    user_guide/index
    api
    examples/index
+
+
+.. grid:: 1 1 3 3
+   :gutter: 4
+   :margin: 3 3 0 0
+
+   .. grid-item-card:: Voronoi Tessellation
+      :link: examples/gcvt
+      :link-type: doc
+
+      Partition complex meshes with Geodesic Centroidal Voronoi Tessellation
+      and the Mesh-LBFGS optimizer.
+
+      .. image:: /_static/gcvt_examples.png
+         :class: example-thumb
+         :alt: GCVT tessellations
+
+   .. grid-item-card:: MeshFlow
+      :link: examples/meshflow
+      :link-type: doc
+
+      Learn how MeshFlow trains a stationary vector field with differentiable
+      exponential maps and biharmonic losses.
+
+      .. image:: /_static/duck_distrib.svg
+         :class: example-thumb
+         :alt: MeshFlow vector field
+
+   .. grid-item-card:: Shape Segmentation
+      :link: examples/segmentation
+      :link-type: doc
+
+      Explore the AGC U-ResNet architecture for dense vertex labeling on human
+      meshes.
+
+      .. image:: /_static/agc_seg.png
+         :class: example-thumb
+         :alt: AGC segmentation samples

@@ -27,6 +27,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx_remove_toctrees',
+    "sphinx_design",
 ]
 
 autodoc_default_options = {
