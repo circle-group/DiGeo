@@ -18,6 +18,7 @@ dependencies = [
     "trimesh",
     "scipy",
     "robust_laplacian",
+    "tqdm"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

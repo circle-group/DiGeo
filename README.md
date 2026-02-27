@@ -47,7 +47,7 @@ You will need to build the package from source if you want to use the latest dev
 **Prerequisites:** Building from source requires a working C++ compiler and the NVIDIA CUDA Toolkit.
 
 ```bash
-pip install --no-build-isolation -e "git+ssh://git@github.com/circle-group/DiGeo.git"
+pip install --no-build-isolation -e digeo@"git+ssh://git@github.com/circle-group/DiGeo.git"
 ```
 
 ## Development
