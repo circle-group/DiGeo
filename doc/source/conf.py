@@ -14,6 +14,8 @@ project = 'DiGeo'
 copyright = '2026, .'
 author = '.'
 
+autodoc_mock_imports = ["digeo.ops.cuda"]
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
