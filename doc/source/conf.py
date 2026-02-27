@@ -85,7 +85,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo"],
     # Note that the alignment of navbar_center is controlled by navbar_align
     "navbar_center": ["navbar-nav"],
-    "navbar_end": ["theme-switcher", "navbar-icon-links", "version-switcher"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
     # navbar_persistent is persistent right (even when on mobiles)
     "navbar_persistent": ["search-button"],
     "article_header_start": ["breadcrumbs"],
