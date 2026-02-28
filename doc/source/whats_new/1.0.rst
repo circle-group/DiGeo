@@ -1,0 +1,52 @@
+.. currentmodule:: digeo
+
+.. _release_notes_1_0:
+
+===========
+Version 1.0
+===========
+
+.. include:: badges.inc
+
+
+Version 1.0.0
+=============
+
+**In development**
+
+First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <somefoti>`.
+
+
+:mod:`digeo`
+------------
+
+- |Feature| :class:`digeo.Mesh` and :class:`digeo.MeshBatch` to handle meshes.
+
+- |Feature| :func:`digeo.load_mesh_from_file` and :func:`digeo.load_mesh_from_trimesh` to load meshes.
+
+- |Feature| :class:`digeo.MeshPoint` and :class:`digeo.MeshPointBatch` to handle points on meshes.
+
+
+:mod:`digeo.ops`
+----------------
+
+- |Feature| :func:`ops.trace_geodesics` to trace geodesics on meshes.
+
+- |Feature| :func:`ops.uniform_sampling` to sample points on meshes.
+
+
+:mod:`digeo.nn`
+---------------
+
+- |Feature| :class:`nn.BiharmonicDistance` to compute biharmonic distances on meshes.
+
+- |Feature| :class:`nn.AGC` to compute adaptive geodesic convolutions on meshes.
+
+
+:mod:`digeo.optim`
+------------------
+
+- |Feature| :func:`optim.mesh_gd` to perform gradient descent on meshes.
+
+- |Feature| :func:`optim.mesh_lbfgs` to execute the Mesh-LFBGS optimization algorithm.
+
