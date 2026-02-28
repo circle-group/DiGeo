@@ -81,7 +81,6 @@ jobs:
         Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
 
         Write-Host "Running silent installation (this may take a few minutes)..."
-        # -s runs the installer silently without a GUI
         Start-Process -FilePath $installerPath -ArgumentList "-s" -Wait -NoNewWindow
 
         # Define the default installation path and expose it to GitHub Actions
@@ -99,6 +98,7 @@ jobs:
         CIBW_ARCHS_WINDOWS: "auto"
         CIBW_BEFORE_BUILD: "pip install ninja"
         CIBW_ENVIRONMENT: >
+          USE_CUDA=1
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
 
     - name: Upload dist artifacts
