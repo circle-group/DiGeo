@@ -5,15 +5,20 @@ on:
     tags:
       - '**'
   pull_request:
+      types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 jobs:
   build-package:
     name: Build package
     runs-on: ${{ matrix.os }}
+    # if: >-
+    #   github.event_name != 'pull_request' ||
+    #   startsWith(github.event.pull_request.title, 'RELEASE')
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+
     steps:
     - uses: actions/checkout@v6
       with:
@@ -42,13 +47,13 @@ jobs:
             if command -v dnf >/dev/null 2>&1; then
               dnf install -y dnf-plugins-core &&
               dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo &&
-              dnf clean all &&
-              dnf -y install cuda-toolkit-12-8;
+              dnf -y install cuda-toolkit-12-8 &&
+              dnf clean all && rm -rf /var/cache/dnf;
             else
               yum install -y yum-utils &&
               yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo &&
-              yum clean all &&
-              yum -y install cuda-toolkit-12-8;
+              yum -y install cuda-toolkit-12-8 &&
+              yum clean all && rm -rf /var/cache/yum;
             fi &&
             /usr/local/cuda-12.8/bin/nvcc --version;
           else
