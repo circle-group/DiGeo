@@ -71,14 +71,37 @@ jobs:
           delocate-wheel -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10* --ignore-missing-dependencies
         CIBW_ENVIRONMENT: "USE_CUDA=0"
 
-    - name: Build Windows CPU Wheels
+    - name: Install CUDA Toolkit on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        # Download the official CUDA 12.8 network installer
+        $installerUrl = "https://developer.download.nvidia.com/compute/cuda/12.8.0/network_installers/cuda_12.8.0_windows_network.exe"
+        $installerPath = "$env:TEMP\cuda_installer.exe"
+
+        Write-Host "Downloading CUDA 12.8 network installer..."
+        Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
+
+        Write-Host "Running silent installation (this may take a few minutes)..."
+        Start-Process -FilePath $installerPath -ArgumentList "-s" -Wait -NoNewWindow
+
+        # Define the default installation path and expose it to GitHub Actions
+        $cudaPath = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8"
+
+        Write-Host "Adding CUDA to environment variables..."
+        echo "CUDA_PATH=$cudaPath" >> $env:GITHUB_ENV
+        echo "$cudaPath\bin" >> $env:GITHUB_PATH
+
+    - name: Build Windows Wheels
       if: runner.os == 'Windows'
       run: cibuildwheel --output-dir dist
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_WINDOWS: "auto"
         CIBW_BEFORE_BUILD: "pip install ninja"
-        CIBW_ENVIRONMENT: "USE_CUDA=0"
+        CIBW_ENVIRONMENT: >
+          USE_CUDA=1
+          TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
 
     - name: Upload dist artifacts
       uses: actions/upload-artifact@v6
