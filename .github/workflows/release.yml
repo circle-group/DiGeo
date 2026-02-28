@@ -30,6 +30,7 @@ jobs:
         python-version: "3.12"
 
     - name: Free Disk Space
+      if: runner.os == 'Linux'
       run: |
         echo "Disk space before cleanup:"
         df -h
