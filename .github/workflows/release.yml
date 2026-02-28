@@ -4,23 +4,49 @@ on:
   push:
     tags:
       - '**'
+  pull_request:
+      types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 jobs:
   build-package:
     name: Build package
     runs-on: ${{ matrix.os }}
+    if: >-
+      github.event_name != 'pull_request' ||
+      startsWith(github.event.pull_request.title, 'RELEASE')
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+
     steps:
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
+
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: "3.12"
+
+    - name: Free Disk Space
+      if: runner.os == 'Linux'
+      run: |
+        echo "Disk space before cleanup:"
+        df -h
+
+        # Remove heavy software suites
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+
+        # Clean up apt cache
+        sudo apt-get clean
+
+        echo "Disk space after cleanup:"
+        df -h
+
     - name: Install build tools
       run: |
         python -m pip install --upgrade pip setuptools wheel build cibuildwheel
@@ -41,13 +67,13 @@ jobs:
             if command -v dnf >/dev/null 2>&1; then
               dnf install -y dnf-plugins-core &&
               dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo &&
-              dnf clean all &&
-              dnf -y install cuda-toolkit-12-8;
+              dnf -y install cuda-toolkit-12-8 &&
+              dnf clean all && rm -rf /var/cache/dnf;
             else
               yum install -y yum-utils &&
               yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo &&
-              yum clean all &&
-              yum -y install cuda-toolkit-12-8;
+              yum -y install cuda-toolkit-12-8 &&
+              yum clean all && rm -rf /var/cache/yum;
             fi &&
             /usr/local/cuda-12.8/bin/nvcc --version;
           else
@@ -60,6 +86,7 @@ jobs:
           CUDA_HOME=/usr/local/cuda-12.8
           PATH=$PATH:/usr/local/cuda-12.8/bin
           TORCH_CUDA_ARCH_LIST='7.5;8.0;8.6;8.9;9.0+PTX'
+          PIP_NO_CACHE_DIR=1
 
     - name: Build macOS CPU Wheels
       if: runner.os == 'macOS'
@@ -102,6 +129,7 @@ jobs:
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
+          PIP_NO_CACHE_DIR=1
 
     - name: Upload dist artifacts
       uses: actions/upload-artifact@v6
