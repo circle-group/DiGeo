@@ -12,9 +12,9 @@ jobs:
   build-package:
     name: Build package
     runs-on: ${{ matrix.os }}
-    # if: >-
-    #   github.event_name != 'pull_request' ||
-    #   startsWith(github.event.pull_request.title, 'RELEASE')
+    if: >-
+      github.event_name != 'pull_request' ||
+      startsWith(github.event.pull_request.title, 'RELEASE')
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
