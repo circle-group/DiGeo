@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '**'
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -60,6 +61,7 @@ jobs:
           CUDA_HOME=/usr/local/cuda-12.8
           PATH=$PATH:/usr/local/cuda-12.8/bin
           TORCH_CUDA_ARCH_LIST='7.5;8.0;8.6;8.9;9.0+PTX'
+          PIP_NO_CACHE_DIR=1
 
     - name: Build macOS CPU Wheels
       if: runner.os == 'macOS'
@@ -102,6 +104,7 @@ jobs:
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
+          PIP_NO_CACHE_DIR=1
 
     - name: Upload dist artifacts
       uses: actions/upload-artifact@v6
