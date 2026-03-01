@@ -121,7 +121,7 @@ jobs:
         echo "$cudaPath\bin" >> $env:GITHUB_PATH
 
         # Verify installation
-        "$cudaPath\bin\nvcc.exe" --version
+        & "$cudaPath\bin\nvcc.exe" --version
 
     - name: Build Windows Wheels
       if: runner.os == 'Windows'
