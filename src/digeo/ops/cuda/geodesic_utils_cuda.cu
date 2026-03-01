@@ -1,12 +1,12 @@
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <string>
 #include <tuple>
+
+#include <torch/extension.h>
+
 #include <cuda_runtime.h>
 #include <cuda.h>
-
-#include <Python.h>
-#include <ATen/Operators.h>
-#include <torch/all.h>
-#include <torch/library.h>
 
 #define CTDA_DEBUG 0
 #define CPH_DEVICE __device__ __forceinline__
@@ -129,7 +129,7 @@ struct Mesh {
         const torch::PackedTensorAccessor32<T,2,torch::RestrictPtrTraits>& triangle_normals,
         const torch::PackedTensorAccessor32<int,2,torch::RestrictPtrTraits>& v2t,
         const torch::PackedTensorAccessor32<T,2,torch::RestrictPtrTraits>& vertex_normals
-    ) : 
+    ) :
         positions(positions),
         triangles(triangles),
         adjacencies(adjacencies),
@@ -305,7 +305,7 @@ CPH_DEVICE void trace_around_hole(
             edge_idx = i;
         }
     }
-    
+
     int next_vertex = -1;
     if (vertex_idx != -1) {
         int hole_edge = -1;
@@ -314,25 +314,25 @@ CPH_DEVICE void trace_around_hole(
                 hole_edge = k;
             }
         }
-        
+
         if (hole_edge == -1) {
             // No hole edge found, just return the current position and barycentric coordinates
             next_pos = curr_pos;
             next_bary = curr_bary;
             return;
         }
-              
+
         int edge_map[3][2] =  {{0,1},{1,2},{2,0}};
         next_vertex = (edge_map[hole_edge][0] == vertex_idx) ? edge_map[hole_edge][1] : edge_map[hole_edge][0];
-    }                     
+    }
     else if (edge_idx != -1) { // Select arbitrary next vertex on the edge
         int next_vertex_map[3] = {1,2,0};
         next_vertex = next_vertex_map[edge_idx];
-    }      
+    }
     else {
         next_vertex = vertex_idx;
     }
-    
+
     vec3<T> dir = mesh.get_vertex(mesh.triangles[curr_tri][next_vertex]) - curr_pos;
     T length_dir = length(dir);
     if (length_dir > max_len) {
@@ -405,13 +405,13 @@ CPH_DEVICE void common_edge(
     int common_verts[2], int& diff_vert_1, int& diff_vert_2, bool& valid
 ) {
     int verts1[3] = {
-        mesh.triangles[tri1][0], 
-        mesh.triangles[tri1][1], 
+        mesh.triangles[tri1][0],
+        mesh.triangles[tri1][1],
         mesh.triangles[tri1][2]
     };
     int verts2[3] = {
-        mesh.triangles[tri2][0], 
-        mesh.triangles[tri2][1], 
+        mesh.triangles[tri2][0],
+        mesh.triangles[tri2][1],
         mesh.triangles[tri2][2]
     };
 
@@ -493,7 +493,7 @@ CPH_DEVICE vec3<T> get_next_bary(const Mesh<T>& mesh, int curr_tri, int next_tri
             }
         }
     }
-    
+
     return next_bary;
 }
 
@@ -569,7 +569,7 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
         if (tri == curr_tri) {
             continue;
         }
-        
+
         // Get the vertices of the triangle
         int vertices[2] = {0,0};
         int idx = 0;
@@ -580,7 +580,7 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
                 idx++;
             }
         }
-        
+
         vec3<T> p0 = mesh.get_vertex(vertex_id);
         vec3<T> p1 = mesh.get_vertex(vertices[0]);
         vec3<T> p2 = mesh.get_vertex(vertices[1]);
@@ -590,7 +590,7 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
         n = mesh.get_triangle_normal(tri);
         dir_proj = normalize(project_vec(dir_3d, n));
         T cos = dot(dir_proj, dir_3d);
-        
+
         if (
             dot(cross(dir_proj, e1), cross(dir_proj, e2)) <= 0 &&
             acos(dot(dir_proj, e1)) + acos(dot(dir_proj, e2)) < T(M_PI) - eps
@@ -605,7 +605,7 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
             best_cos = cos;
         }
     }
-            
+
     bool is_near_hole_flag = false;
     if (best_tri_final == -1) {
         // No valid triangle found, use next edge close to hole
@@ -615,21 +615,21 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
             if (tri == curr_tri) {
                 continue;
             }
-            
+
             for (int k=0; k<3; k++) {
                 int v1 = mesh.triangles[tri][edges[k][0]];
                 int v2 = mesh.triangles[tri][edges[k][1]];
                 if (v1 != vertex_id && v2 != vertex_id) {
                     continue;
                 }
-                
+
                 if (mesh.adjacencies[tri][k] == -1) {
                     best_tri_final = tri;
                     is_near_hole_flag = true;
                     break;
                 }
             }
-            
+
             if (is_near_hole_flag) {
                 break;
             }
@@ -637,12 +637,12 @@ CPH_DEVICE void compute_parallel_transport_vertex_hole(
         // No valid triangle found, select best triangle instead
         if (best_tri_final == -1) {
             best_tri_final = best_tri;
-        } 
+        }
     }
 
     n = mesh.get_triangle_normal(best_tri_final);
     dir_proj = normalize(project_vec(dir_3d, n));
-    
+
     out_dir = dir_proj;
     out_tri = best_tri_final;
     out_normal = n;
@@ -670,7 +670,7 @@ CPH_DEVICE void compute_parallel_transport_vertex(
     // Sum absolute angles around the vertex
     for (int idx = 1; idx <= len_connected_triangles; idx++) {
         int tri_id = mesh.v2t[vertex_id][idx];
-        
+
         // Find the two other vertices in this triangle that are not vertex_id
         int verts[2];
         int vcount = 0;
@@ -685,7 +685,7 @@ CPH_DEVICE void compute_parallel_transport_vertex(
         vec3<T> vec1 = mesh.get_vertex(verts[1]) - mesh.get_vertex(vertex_id);
         vec3<T> n = mesh.get_triangle_normal(tri_id);
 
-        T angle = abs(signed_angle(vec0, vec1, n));
+        T angle = std::abs(signed_angle(vec0, vec1, n));
         total_angle += angle;
     }
 
@@ -751,7 +751,7 @@ CPH_DEVICE void compute_parallel_transport_vertex(
 
         n = triangle_normal(p0, p1, p2);
 
-        T tri_angle = abs(signed_angle(p1 - p0, p2 - p0, n));
+        T tri_angle = std::abs(signed_angle(p1 - p0, p2 - p0, n));
 
         if (angle + tri_angle >= half_angle - eps) {
             T angle_diff = half_angle - angle;
@@ -832,14 +832,14 @@ CPH_DEVICE void project_vertex_dir(
 
         total_angle += acos(dot(e1, e2));
 
-        T proj_loss = abs(dot(e1, v_normal));
+        T proj_loss = std::abs(dot(e1, v_normal));
         if (proj_loss < best_proj) {
             best_proj = proj_loss;
             best_tri = tri_id;
             best_v = v1;
         }
 
-        proj_loss = abs(dot(e2, v_normal));
+        proj_loss = std::abs(dot(e2, v_normal));
         if (proj_loss < best_proj) {
             best_proj = proj_loss;
             best_tri = tri_id;
@@ -977,11 +977,11 @@ __global__ void straightest_geodesic_single(
         curr_bary = curr_point.get_barycentric_coords();
         current_normal = mesh.get_triangle_normal(curr_tri);
     } else {
-        current_normal = mesh.get_triangle_normal(curr_point.face);   
+        current_normal = mesh.get_triangle_normal(curr_point.face);
         dir = project_vec(dir, current_normal);
         max_len_path = length(dir);
     }
-  
+
     T len_path = T(0.0);
     dir = normalize(dir);
 
@@ -1038,8 +1038,8 @@ __global__ void straightest_geodesic_single(
         if (step > max_steps) {
             if (print_warnings) {
                 printf("Warning: Exceeded maximum steps in straightest_geodesic.\n");
-                printf("UV: [%.9g, %.9g], face: %d, direction: [%.9g, %.9g, %.9g]\n", 
-                    curr_point.u, curr_point.v, curr_point.face, 
+                printf("UV: [%.9g, %.9g], face: %d, direction: [%.9g, %.9g, %.9g]\n",
+                    curr_point.u, curr_point.v, curr_point.face,
                     start_dirs[i][0], start_dirs[i][1], start_dirs[i][2]);
                 printf("Start UV: [%.9g, %.9g], face: %d\n", start_uvs[i][0], start_uvs[i][1], start_face[i]);
             }
@@ -1073,7 +1073,7 @@ __global__ void straightest_geodesic_single(
                 next_pos[0], next_pos[1], next_pos[2],
                 next_bary[0], next_bary[1], next_bary[2],
                 dir[0], dir[1], dir[2]
-            ); 
+            );
         # endif
 
         if (is_vert_bary) {
@@ -1112,7 +1112,7 @@ __global__ void straightest_geodesic_single(
             int vert_idx = -1;
             next_bary[0] = next_bary[1] = next_bary[2] = T(0);
             if (dists[0] < dists[1] && dists[0] < dists[2]) {
-                vert_idx = 0;     
+                vert_idx = 0;
             }
             else if (dists[1] < dists[0] && dists[1] < dists[2]) {
                 vert_idx = 1;
@@ -1130,7 +1130,7 @@ __global__ void straightest_geodesic_single(
                         break;
                     }
                 }
-            }        
+            }
 
             curr_tri = next_tri;
             curr_bary = next_bary;
@@ -1143,7 +1143,7 @@ __global__ void straightest_geodesic_single(
 
             if (adj_tri == -1) {
                 is_near_hole = true;
-                if (!avoid_holes) {      
+                if (!avoid_holes) {
                     adj_tri = curr_tri;
                     curr_point = MeshPoint<T>(curr_tri, next_bary[1], next_bary[2]);
                     break;
@@ -1201,14 +1201,14 @@ __global__ void straightest_geodesic_single(
             curr_pos[0], curr_pos[1], curr_pos[2],
             curr_bary[0], curr_bary[1], curr_bary[2],
             dir[0], dir[1], dir[2]
-        ); 
+        );
     # endif
 
     if (debug) {
         debug_tensor[i][0][0][0] = step;
         debug_tensor[i][0][0][1] = vertex_crossings;
     }
-    
+
     final_results[i][0][0] = T(curr_point.face);
     final_results[i][0][1] = curr_point.u;
     final_results[i][0][2] = curr_point.v;
@@ -1255,7 +1255,7 @@ std::tuple<torch::Tensor, torch::Tensor> straightest_geodesics_cuda_impl(
     }
     else {
         debug_tensor = torch::empty({1,1,1,1}, start_uv.options());
-    }   
+    }
 
     const int threads = 256;
     const int blocks = (num_starts + threads - 1) / threads;
@@ -1274,7 +1274,7 @@ std::tuple<torch::Tensor, torch::Tensor> straightest_geodesics_cuda_impl(
         final_results.packed_accessor32<scalar_t, 3, torch::RestrictPtrTraits>(),
         debug_tensor.packed_accessor32<scalar_t, 4, torch::RestrictPtrTraits>()
     );
-    
+
     return std::make_tuple(final_results, debug_tensor);
 }
 

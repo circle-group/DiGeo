@@ -52,7 +52,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel build cibuildwheel
 
     - name: Build Linux Wheels
-      if: runner.os == 'Linux' && false
+      if: runner.os == 'Linux'
       run: cibuildwheel --output-dir dist
       env:
         CIBW_BUILD_VERBOSITY: 1
