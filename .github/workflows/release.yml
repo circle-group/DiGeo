@@ -132,8 +132,11 @@ jobs:
         CIBW_BEFORE_BUILD: "pip install ninja"
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
+          CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
+          PATH="$PATH;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin"
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
           PIP_NO_CACHE_DIR=1
+          PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"
 
     - name: Upload dist artifacts
       uses: actions/upload-artifact@v6
