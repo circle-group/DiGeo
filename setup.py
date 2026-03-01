@@ -1,7 +1,5 @@
 import os
 import glob
-import torch
-import sys
 
 from setuptools import setup
 from torch.utils.cpp_extension import (
@@ -12,11 +10,6 @@ from torch.utils.cpp_extension import (
 )
 
 library_name = "digeo"
-
-if torch.__version__ >= "2.6.0" and sys.version_info >= (3, 11):
-    py_limited_api = True
-else:
-    py_limited_api = False
 
 def get_extensions():
     debug_mode = os.getenv("DEBUG", "0") == "1"
@@ -60,7 +53,7 @@ def get_extensions():
             sources,
             extra_compile_args=extra_compile_args,
             extra_link_args=extra_link_args,
-            py_limited_api=py_limited_api,
+            py_limited_api=False,
         )
     ]
 
