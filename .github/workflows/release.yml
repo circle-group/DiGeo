@@ -129,7 +129,7 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_WINDOWS: "auto"
-        CIBW_BEFORE_BUILD: "pip install ninja"
+        CIBW_BEFORE_BUILD: "pip install ninja torch==2.5.1"
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
           CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
