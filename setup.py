@@ -24,6 +24,8 @@ def get_extensions():
         print("Compiling in debug mode")
 
     use_cuda = use_cuda and CUDA_HOME is not None
+    print(f"Using CUDA: {use_cuda}")
+
     extension = CUDAExtension if use_cuda else CppExtension
 
     extra_link_args = []
