@@ -132,7 +132,7 @@ jobs:
           PIP_NO_CACHE_DIR=1
 
     - name: Upload dist artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: python-package-${{ matrix.os }}
         path: dist/*
