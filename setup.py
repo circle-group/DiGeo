@@ -32,7 +32,11 @@ def get_extensions():
     if is_windows:
         # MSVC Flags
         if debug_mode:
-            extra_compile_args["cxx"] = ["/Od", "/Z7", "-DTORCH_USE_CUDA_DSA"]
+            extra_compile_args["cxx"] = [
+                "/Od",
+                "/Z7",
+                "-DTORCH_USE_CUDA_DSA",
+            ]
             extra_link_args = ["/DEBUG"]
         else:
             extra_compile_args["cxx"] = ["/O2"]
@@ -60,10 +64,11 @@ def get_extensions():
     if debug_mode:
         extra_compile_args["nvcc"] += ["-g", "-G", "-lineinfo", "-DTORCH_USE_CUDA_DSA"]
 
-    if is_windows:
-        extra_compile_args["nvcc"] += ["-D_WIN32=1"]
+    if use_cuda and is_windows:
+        extra_compile_args["cxx"] += ["-DUSE_CUDA"]
+        extra_compile_args["nvcc"] += ["-DUSE_CUDA"]
 
-    # --- 3. Sources ---
+    # Sources
     extensions_dir = "src/digeo/ops/cuda"
     sources = list(glob.glob(os.path.join(extensions_dir, "*.cpp")))
     cuda_sources = list(glob.glob(os.path.join(extensions_dir, "*.cu")))
