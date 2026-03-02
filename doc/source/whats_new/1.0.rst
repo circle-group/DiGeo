@@ -14,7 +14,7 @@ Version 1.0.0
 
 **In development**
 
-First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <somefoti>`.
+First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, Stefanos Zafeiriou, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <somefoti>`.
 
 
 :mod:`digeo`
