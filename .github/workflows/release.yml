@@ -135,6 +135,7 @@ jobs:
           CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
           PATH="$PATH;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin"
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
+          CIBW_BUILD_FRONTEND: "build; args: --no-isolation"
           PIP_NO_CACHE_DIR=1
           PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"
 
