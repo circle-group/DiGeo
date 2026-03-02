@@ -1,32 +1,53 @@
 :html_theme.sidebar_primary.remove:
 
-Install
-=======
+Installation
+============
 
 Dependencies
 ------------
-* Python >= 3.10
-* PyTorch >= 2.0 *(Note: Must be installed with CUDA support if using a GPU)*
-* NumPy, tqdm, SciPy, Trimesh, Robust Laplacian
 
-Install via pip
----------------
+Before installing ``DiGeo``, ensure you have a compatible Python version.
+The necessary libraries will be installed automatically via ``pip``.
 
-You can install the latest release directly from PyPI:
+- **Python:** >= 3.10
+- **PyTorch:** >= 2.0 (must be installed with **CUDA support** for GPU acceleration)
+- **Libraries:** ``NumPy``, ``tqdm``, ``SciPy``, ``Trimesh``, ``Robust Laplacian``
+
+
+Standard Installation (via pip)
+--------------------------------
+
+The easiest way to install the latest stable release is through PyPI.
 
 .. code-block:: bash
 
-    pip install digeo
+   pip install digeo
 
-*Note: Pre-compiled CUDA kernels are currently included for Linux x86_64. If you are installing on macOS, Windows, or another architecture,* ``pip`` *will automatically fall back to the CPU-only version. If you require CUDA, you must build from source.*
+.. important::
 
-Install from source
+   **Compatibility Note:** The PyPI version is compiled against the latest
+   stable PyTorch release and CUDA 12.8. If you are using a specific or older
+   version of PyTorch, we recommend building from source to ensure binary
+   compatibility.
+
+
+Platform & Hardware Support
+---------------------------
+
+``DiGeo`` utilizes custom CUDA kernels. Please note the following hardware
+limitations for the ``pip`` installation:
+
+- **Linux (x86_64) and Windows (ARM64):** Includes pre-compiled CUDA kernels.
+- **Linux (ARM64) and macOS:** ``pip`` will default to a **CPU-only** version.
+  For GPU support, you will need to build the package from source.
+- **Other platforms or architectures:** You must build the package from source.
+
+
+Install from Source
 -------------------
 
-You will need to build the package from source if you want to use the latest development version or if you need to compile the CUDA kernels specifically for your local GPU architecture.
-
-**Prerequisites:** Building from source requires a working C++ compiler and the NVIDIA CUDA Toolkit.
+**Requirements:** A working **C++ compiler** and the **NVIDIA CUDA Toolkit**.
 
 .. code-block:: bash
 
-    pip install --no-build-isolation -e digeo@"git+ssh://git@github.com/circle-group/DiGeo.git"
+   pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git"

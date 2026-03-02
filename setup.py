@@ -64,7 +64,7 @@ def get_extensions():
     if debug_mode:
         extra_compile_args["nvcc"] += ["-g", "-G", "-lineinfo", "-DTORCH_USE_CUDA_DSA"]
 
-    if use_cuda and is_windows:
+    if use_cuda:
         extra_compile_args["cxx"] += ["-DUSE_CUDA"]
         extra_compile_args["nvcc"] += ["-DUSE_CUDA"]
 
