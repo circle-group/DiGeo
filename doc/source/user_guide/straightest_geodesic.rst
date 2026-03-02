@@ -55,7 +55,7 @@ TODO: add plots comparing the different methods, and a more detailed explanation
 Parallel transport
 ------------------
 
-When tracing geodesics, it can be needed to parallel transport vectors along the geodesic. This can be done by settiing the ``save_parallel_transport`` argument of :func:`digeo.trace_geodesics` to ``True``.
+When tracing geodesics, it can be needed to parallel transport vectors along the geodesic. This can be done by settiing the ``save_parallel_transport`` argument of :func:`digeo.ops.trace_geodesics` to ``True``.
 This will allow to parallel transport vectors along the geodesic, which can be useful for computing gradients or for other applications.
 
 .. code-block:: python
@@ -74,7 +74,7 @@ This will allow to parallel transport vectors along the geodesic, which can be u
 Debugging
 ---------
 
-When tracing geodesics, it can be useful to visualize the geodesics and the parallel transport. This can be done by setting the ``debug`` argument of :func:`digeo.trace_geodesics` to ``True``. This will return additional information about the geodesic tracing operation, which can be used for debugging purposes.
+When tracing geodesics, it can be useful to visualize the geodesics and the parallel transport. This can be done by setting the ``debug`` argument of :func:`digeo.ops.trace_geodesics` to ``True``. This will return additional information about the geodesic tracing operation, which can be used for debugging purposes.
 This requires much more memory, since it saves the entire geodesic paths, as well as directions and normals.
 
 .. code-block:: python

@@ -6,10 +6,8 @@ The DiGeo library represents meshes using PyTorch tensors to enable GPU accelera
 Loading Meshes
 --------------
 
-You can load meshes using the functions provided in ``src/digeo/mesh_loader.py``. The two primary methods are:
-
-1. **From a file:** Uses ``trimesh`` internally to read standard 3D formats (like ``.obj``).
-2. **From an existing trimesh.Trimesh object:** Useful if you have already loaded or generated a mesh using ``trimesh``.
+1. **From a file** with :func:`digeo.load_mesh_from_file`. Uses ``trimesh`` internally to read standard 3D formats (like ``.obj``).
+2. **From an existing trimesh.Trimesh object** with :func:`digeo.load_mesh_from_trimesh`. Useful if you have already loaded or generated a mesh using ``trimesh``.
 
 .. code-block:: python
 
@@ -62,13 +60,13 @@ When working with batched meshes, any points on the mesh (represented by ``MeshP
 MeshPoints
 ----------
 
-Points on the mesh are represented by the ``MeshPoint`` class, which encodes a point as a face index and barycentric coordinates within that face. This representation allows for efficient interpolation of vertex attributes (like normals) at the point location.
+Points on the mesh are represented by the ``MeshPoint`` class, which encodes a point as a face index and barycentric coordinates within that face. This representation allows for efficient interpolation of face attributes (like normals) at the point location.
 
 However, it is prefered to use directly the ``MeshPointBatch`` class, which is a batch of ``MeshPoint`` objects, as it is more efficient to process points in batches, especially when tracing geodesics or computing gradients.
 
 To create a ``MeshPointBatch``, you can use the sampling functions provided in ``src/digeo/ops/sampling.py``, such as ``uniform_sampling``. It is also possible to create a ``MeshPointBatch`` from explicit face indices and uv coordinates.
 
-It is also possible to convert these meshpoints to 3d coordinates easily, using :func:`MeshPointBatch.interpolate`.
+It is also possible to convert these meshpoints to 3d coordinates using :func:`MeshPointBatch.interpolate`.
 
 .. code-block:: python
 

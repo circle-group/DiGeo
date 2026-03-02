@@ -41,7 +41,6 @@ The easiest way to install the latest stable release is through PyPI.
 pip install digeo
 ```
 
-> [!IMPORTANT]
 > **Compatibility Note:** The PyPI version is compiled against the latest stable PyTorch release and CUDA 12.8. If you are using a specific or older version of PyTorch, we recommend building from source to ensure binary compatibility.
 
 
