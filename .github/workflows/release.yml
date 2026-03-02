@@ -5,7 +5,7 @@ on:
     tags:
       - '**'
   pull_request:
-      types: [opened, synchronize, reopened, edited]
+      types: [opened, synchronize, reopened, edited, labeled]
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     if: >-
       github.event_name != 'pull_request' ||
-      startsWith(github.event.pull_request.title, 'RELEASE')
+      startsWith(github.event.pull_request.title, 'RELEASE') ||
+      contains(github.event.pull_request.labels.*.name, 'build')
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
