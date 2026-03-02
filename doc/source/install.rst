@@ -48,6 +48,7 @@ Install from Source
 
 **Requirements:** A working **C++ compiler** and the **NVIDIA CUDA Toolkit**.
 
+To To install version x.y.z of DiGeo from source:
 .. code-block:: bash
 
-   pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git"
+   pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z"
