@@ -4,11 +4,11 @@ Mesh Optimisers
 Creating a Loss Function
 ------------------------
 
-To create a loss function, you can subclass the `MeshLossFunc` class and implement the `compute` method.
-The `compute` method should take in the mesh and the points, and return a tuple containing the loss value and the gradient with respect to the points.
+To create a loss function, you can subclass the :class:`digeo.optim.MeshLossFunc` class and implement the ``compute`` method.
+The ``compute`` method should take in the mesh and the points, and return a tuple containing the loss value and the gradient with respect to the points.
 The gradients should be in 3d space, and the loss value should be a scalar.
 
-With the loss function defined, you can then use it in the optimisers provided in the `digeo.optim` module, such as `mesh_gd` and `mesh_lbfgs`.
+With the loss function defined, you can then use it in the optimisers provided in the ``digeo.optim`` module, such as ``mesh_gd`` and ``mesh_lbfgs``.
 
 Example
 -------

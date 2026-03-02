@@ -38,6 +38,7 @@ autodoc_default_options = {
 
 autosummary_generate = True
 autosummary_imported_members = True
+autoclass_content = "init"
 autodoc_typehints = "description"
 templates_path = ['_templates']
 exclude_patterns = []

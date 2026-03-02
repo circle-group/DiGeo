@@ -30,19 +30,18 @@ Implemented with PyTorch and custom CUDA kernels, DiGeo is built for efficiency 
 Before installing `DiGeo`, ensure you have a compatible python version, the necessary libraries will be installed automatically via pip:
 
 * **Python:** $\ge$ 3.10
-* **PyTorch:** $\ge$ 2.0 (Must be installed with **CUDA support** for GPU acceleration)
-* **Libraries:** `NumPy`, `tqdm`, `SciPy`, `Trimesh`, `Robust Laplacian`
+* **Libraries:** `Pytorch`, `NumPy`, `tqdm`, `SciPy`, `Trimesh`, `Robust Laplacian`
 
 ### Standard Installation (via pip)
 
-The easiest way to install the latest stable release is through PyPI.
+The easiest way to install the latest stable release is through PyPI. The wheels are precompiled using Pytorch 2.10 and CUDA 12.8.
 
 ```bash
+pip install torch==2.10 --index-url https://download.pytorch.org/whl/cu128
 pip install digeo
 ```
 
-> [!IMPORTANT]
-> **Compatibility Note:** The PyPI version is compiled against the latest stable PyTorch release and CUDA 12.8. If you are using a specific or older version of PyTorch, we recommend building from source to ensure binary compatibility.
+> **Compatibility Note:** If you are using another version of PyTorch or CUDA, you will need to build from source to ensure binary compatibility.
 
 
 ### Platform & Hardware Support
@@ -58,8 +57,9 @@ pip install digeo
 
 **Requirements:** A working **C++ compiler** and the **NVIDIA CUDA Toolkit**.
 
+To install version x.y.z of DiGeo from source:
 ```bash
-pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git"
+pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z"
 ```
 
 ## Development
