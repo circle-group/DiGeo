@@ -102,22 +102,26 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        # Download the official CUDA 12.8 network installer
-        $installerUrl = "https://developer.download.nvidia.com/compute/cuda/12.8.0/network_installers/cuda_12.8.0_windows_network.exe"
+        # Use the LOCAL installer
+        $installerUrl = "https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/cuda_12.8.0_571.96_windows.exe"
         $installerPath = "$env:TEMP\cuda_installer.exe"
 
-        Write-Host "Downloading CUDA 12.8 network installer..."
+        Write-Host "Downloading CUDA 12.8 local installer..."
         Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
 
-        Write-Host "Running silent installation (this may take a few minutes)..."
-        Start-Process -FilePath $installerPath -ArgumentList "-s" -Wait -NoNewWindow
+        Write-Host "Running silent installation..."
+        Start-Process -FilePath $installerPath -ArgumentList "-s nvcc_12.8 cudart_12.8 visual_studio_integration_12.8" -Wait -NoNewWindow
 
-        # Define the default installation path and expose it to GitHub Actions
+        # Define the default installation path
         $cudaPath = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8"
 
         Write-Host "Adding CUDA to environment variables..."
         echo "CUDA_PATH=$cudaPath" >> $env:GITHUB_ENV
+        echo "CUDA_HOME=$cudaPath" >> $env:GITHUB_ENV
         echo "$cudaPath\bin" >> $env:GITHUB_PATH
+
+        # Verify installation
+        & "$cudaPath\bin\nvcc.exe" --version
 
     - name: Build Windows Wheels
       if: runner.os == 'Windows'
@@ -128,8 +132,11 @@ jobs:
         CIBW_BEFORE_BUILD: "pip install ninja"
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
+          CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
+          PATH="$PATH;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin"
           TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0+PTX"
           PIP_NO_CACHE_DIR=1
+          PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"
 
     - name: Upload dist artifacts
       uses: actions/upload-artifact@v7

@@ -1,11 +1,9 @@
-#include <Python.h>
-#include <ATen/Operators.h>
-#include <ATen/TensorAccessor.h>
-#include <torch/all.h>
-#include <torch/library.h>
-
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <string>
 #include <tuple>
+
+#include <torch/extension.h>
 
 #define CT_CUDA_DEBUG 0
 
