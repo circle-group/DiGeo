@@ -1,6 +1,6 @@
 [build-system]
 # Require setuptools and torch up front so they are available to build the extension
-requires = ["setuptools>=77.0.3", "torch"]
+requires = ["setuptools>=77.0.3", "torch==2.5.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
