@@ -14,39 +14,38 @@ Version 1.0.0
 
 **In development**
 
-First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, Stefanos Zafeiriou, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <somefoti>`.
+First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, Stefanos Zafeiriou, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <simofoti>`.
 
 
 :mod:`digeo`
 ------------
 
-- |Feature| :class:`digeo.Mesh` and :class:`digeo.MeshBatch` to handle meshes.
+- |Feature| :class:`digeo.Mesh` and :class:`digeo.MeshBatch` to represent triangle meshes and batches of meshes on CPU and GPU.
 
-- |Feature| :func:`digeo.load_mesh_from_file` and :func:`digeo.load_mesh_from_trimesh` to load meshes.
+- |Feature| :func:`digeo.load_mesh_from_file` and :func:`digeo.load_mesh_from_trimesh` to load meshes from disk or from Trimesh objects.
 
-- |Feature| :class:`digeo.MeshPoint` and :class:`digeo.MeshPointBatch` to handle points on meshes.
+- |Feature| :class:`digeo.MeshPoint` and :class:`digeo.MeshPointBatch` to represent points on meshes as face indices and barycentric coordinates.
 
 
 :mod:`digeo.ops`
 ----------------
 
-- |Feature| :func:`ops.trace_geodesics` to trace geodesics on meshes.
+- |Feature| :func:`ops.trace_geodesics` to trace straightest geodesics (exponential map) on meshes, with multiple gradient computation strategies: ``"none"``, ``"ep"`` (extrinsic proxy), ``"jvp"`` (Jacobian-vector product) and ``"gfd"`` (geodesic finite differences). See :ref:`differentiation_methods` for details.
 
-- |Feature| :func:`ops.uniform_sampling` to sample points on meshes.
+- |Feature| :func:`ops.uniform_sampling` to uniformly sample points on the surface of a mesh.
 
 
 :mod:`digeo.nn`
 ---------------
 
-- |Feature| :class:`nn.BiharmonicDistance` to compute biharmonic distances on meshes.
+- |Feature| :class:`nn.BiharmonicDistance` to compute biharmonic distances between points on a mesh.
 
-- |Feature| :class:`nn.AGC` to compute adaptive geodesic convolutions on meshes.
+- |Feature| :class:`nn.AGC` (Adaptive Geodesic Convolution) layer that performs convolution over geodesic polar patches on the mesh surface, suitable for geometric deep learning tasks.
 
 
 :mod:`digeo.optim`
 ------------------
 
-- |Feature| :func:`optim.mesh_gd` to perform gradient descent on meshes.
+- |Feature| :func:`optim.mesh_gd` to perform Riemannian gradient descent on meshes, with optional Wolfe line search.
 
-- |Feature| :func:`optim.mesh_lbfgs` to execute the Mesh-LFBGS optimization algorithm.
-
+- |Feature| :func:`optim.mesh_lbfgs` to execute the Mesh-LBFGS Riemannian optimization algorithm, which adapts L-BFGS to the mesh manifold via parallel transport. See the :doc:`/examples/gcvt` example for an application to geodesic centroidal Voronoi tessellation.
