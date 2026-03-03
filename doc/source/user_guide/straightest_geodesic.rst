@@ -26,9 +26,9 @@ The method takes as input a mesh, a batch of points, and directions to trace the
     # Trace geodesics
     geodesics, _ = trace_geodesics(mesh, points, directions)
 
-.. _differentitation_methods:
+.. _differentiation_methods:
 
-Differentitation methods
+Differentiation methods
 ------------------------
 
 There exists different methods to compute the gradient of the geodesic tracing operation, which can be specified with the ``gradient`` argument of :func:`digeo.ops.trace_geodesics`:

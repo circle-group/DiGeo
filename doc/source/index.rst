@@ -11,6 +11,7 @@ DiGeo
    user_guide/index
    api
    examples/index
+   whats_new
 
 
 .. grid:: 1 1 3 3

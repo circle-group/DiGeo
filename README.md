@@ -15,6 +15,7 @@ Implemented with PyTorch and custom CUDA kernels, DiGeo is built for efficiency 
     <!-- TODO: change this to url -->
 </p>
 
+
 ## Key Features
 
 * **Fast Geodesic Tracing:** Highly optimized C++ and CUDA kernels for tracing straightest geodesics on meshes.
@@ -22,6 +23,7 @@ Implemented with PyTorch and custom CUDA kernels, DiGeo is built for efficiency 
 * **Batched Operations:** Process multiple meshes and points simultaneously using `MeshBatch` and `MeshPointBatch`.
 * **Mesh Optimization:** Built-in Riemannian optimization algorithms including Gradient Descent (`mesh_gd`) and L-BFGS (`mesh_lbfgs`).
 * **Geometric Deep Learning:** Includes neural network modules like the Adaptive Geodesic Convolutional Layer (`AGC`) and Biharmonic Distance.
+
 
 ## Installation
 
@@ -62,20 +64,6 @@ To install version x.y.z of DiGeo from source:
 pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z"
 ```
 
-## Development
-
-To contribute or modify the package, clone the repository and install the development dependencies:
-
-```bash
-git clone https://github.com/circle-group/DiGeo.git
-cd digeo
-pip install --no-build-isolation -e .[test]
-```
-
-Run the test suite using `pytest`:
-```bash
-pytest -v
-```
 
 ## License
 
