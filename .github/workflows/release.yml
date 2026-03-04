@@ -59,7 +59,9 @@ jobs:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_LINUX: "auto"
         CIBW_SKIP: "*musl*"
-        CIBW_BEFORE_BUILD: "pip install torch==${{ matrix.torch }}"
+        CIBW_BEFORE_BUILD: >
+          rm -rf /opt/python/*/lib/python*/site-packages/nvidia* /opt/python/*/lib/python*/site-packages/torch* /tmp/build-env-* /tmp/pip-* || true &&
+          pip install torch==${{ matrix.torch }}
         CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
           auditwheel repair -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10*
 
@@ -133,8 +135,9 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_WINDOWS: "auto"
-        CIBW_BEFORE_BUILD: "pip install torch==${{ matrix.torch }} ninja"
-        # Dynamically toggle USE_CUDA and PyTorch index URL
+        CIBW_BEFORE_BUILD: >
+          rm -rf /opt/python/*/lib/python*/site-packages/nvidia* /opt/python/*/lib/python*/site-packages/torch* /tmp/build-env-* /tmp/pip-* || true &&
+          pip install torch==${{ matrix.torch }} ninja
         CIBW_ENVIRONMENT: >
           USE_CUDA=${{ matrix.cuda == true && '1' || '0' }}
           CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
