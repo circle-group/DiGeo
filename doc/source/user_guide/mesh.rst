@@ -8,6 +8,9 @@ Loading Meshes
 
 1. **From a file** with :func:`digeo.load_mesh_from_file`. Uses ``trimesh`` internally to read standard 3D formats (like ``.obj``).
 2. **From an existing trimesh.Trimesh object** with :func:`digeo.load_mesh_from_trimesh`. Useful if you have already loaded or generated a mesh using ``trimesh``.
+3. **From vertices and faces** by directly creating a :class:`digeo.Mesh` object. This requires providing the vertex positions and face indices as PyTorch tensors or Numpy arrays.
+
+When loading meshes, you can specify the device (CPU or GPU) and data type (e.g., float32), allowing for efficient processing in subsequent operations.
 
 .. code-block:: python
 
@@ -21,6 +24,12 @@ Loading Meshes
     # Load from an existing trimesh object
     trimesh_obj = trimesh.creation.icosphere()
     mesh = load_mesh_from_trimesh(trimesh_obj, device="cuda", dtype=torch.float32)
+
+    # Using vertices and faces to create a Mesh
+    vertices = torch.randn((100, 3))
+    faces = torch.randint(0, 100, (200, 3))
+    mesh = Mesh(vertices, faces, device="cuda", dtype=torch.float32)
+
 
 Batching Meshes
 ---------------
