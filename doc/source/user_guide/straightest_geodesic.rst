@@ -29,7 +29,7 @@ The method takes as input a mesh, a batch of points, and directions to trace the
 .. _differentiation_methods:
 
 Differentiation methods
-------------------------
+-----------------------
 
 There exists different methods to compute the gradient of the geodesic tracing operation, which can be specified with the ``gradient`` argument of :func:`digeo.ops.trace_geodesics`:
 
@@ -37,19 +37,18 @@ There exists different methods to compute the gradient of the geodesic tracing o
 No gradient is computed.
 
 ``"ep"``:
-Uses the extrinsic proxy method, which computes the gradient by parallel transporting the point along the geodesic and differentiating through the parallel transport.
+Uses the Extrinsic Proxy method, which computes the gradient by parallel transporting the point along the geodesic and differentiating through the parallel transport.
 This method is the most efficient, but can be less accurate than the following methods.
 
 ``"gfd"``:
-Uses geodesic finite differences, which computes the gradient by finite differencing the geodesic tracing operation.
+Uses Geodesic Finite Differences, which computes the gradient by finite differencing the geodesic tracing operation.
 This method is more accurate than the extrinsic proxy method, but is also less efficient.
 
-``"jvp"``:
-Uses the Jacobian-vector product, which computes the gradient by backtracking through the geodesic tracing operation using the Jacobian-vector product.
-This method lies in between the extrinsic proxy and geodesic finite differences methods in terms of accuracy and efficiency.
+``"abfd"``:
+Uses the Adjoint Backward Finite Differences method, which computes the gradient by backtracking through the geodesic tracing operation using the Jacobian-vector product. This method is experimental and may cause undesirable behaviors when the mesh presents regions of high curvature.
 
 
-TODO: add plots comparing the different methods, and a more detailed explanation of how they work.
+.. TODO: add plots comparing the different methods, and a more detailed explanation of how they work.
 
 
 Parallel transport

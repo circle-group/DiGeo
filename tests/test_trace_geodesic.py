@@ -212,7 +212,7 @@ def test_trace_geodesic_mesh(device, use_python):
     [
         ("gfd", 0.99, 0.99),
         ("ep", 0.80, 0.80),
-        ("jvp", 0.99, 0.80),
+        ("abfd", 0.99, 0.80),
     ],
 )
 def test_trace_geodesic_gradient_sphere(method, min_grad_x_sim, min_grad_v_sim):
@@ -224,7 +224,7 @@ def test_trace_geodesic_gradient_sphere(method, min_grad_x_sim, min_grad_v_sim):
     [
         ("gfd", 0.99, 0.99),
         ("ep", 0.99, 0.99),
-        ("jvp", 0.99, 0.99),
+        ("abfd", 0.99, 0.99),
     ],
 )
 def test_trace_geodesic_gradient_plane(method, min_grad_x_sim, min_grad_v_sim):
