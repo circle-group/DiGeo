@@ -47,4 +47,4 @@ Install from Source
 To install version x.y.z of DiGeo from source:
 .. code-block:: bash
 
-   pip install --no-build-isolation -e "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z"
+   pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z" --no-build-isolation
