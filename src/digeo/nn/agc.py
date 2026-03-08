@@ -48,6 +48,8 @@ class AGC(nn.Module):
         Where C=in_filters * n_patches, and produces output features of shape (V, C')
         where C'=out_filters * n_patches.
 
+        For a detailed description of the module, see :ref:`agc` in the user guide.
+
         Parameters
         ----------
         in_filters : int

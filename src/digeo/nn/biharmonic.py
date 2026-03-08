@@ -148,6 +148,9 @@ class BiharmonicDistance(torch.nn.Module):
         """
         Initialize the BiharmonicDistance module.
 
+        For a detailed description of the module, see :ref:`biharmonic_distance`
+        in the user guide.
+
         Parameters
         ----------
         mesh: Mesh
