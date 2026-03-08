@@ -4,6 +4,8 @@
 DiGeo
 =====
 
+**DiGeo** (Differentiable Geometry) is a Python package for differential geometry in learning and optimisation applications on triangular meshes. Built on PyTorch and custom CUDA kernels, it provides differentiable exponential maps, parallel transport, and geodesic tracing as core operations. DiGeo also features high-level tools including geodesic convolutions, biharmonic distance, and Riemannian optimisers (gradient descent and L-BFGS). It supports batched inputs, single and double precision, and runs on both CPU and GPU.
+
 .. toctree::
    :hidden:
 
@@ -13,6 +15,9 @@ DiGeo
    examples/index
    whats_new
 
+
+Examples
+--------
 
 .. grid:: 1 1 3 3
    :gutter: 4
