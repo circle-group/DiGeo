@@ -115,12 +115,12 @@ class AGC(nn.Module):
         -------
             Tensor: Output features of shape (V, C')
         """
-        num_vertices = mesh.positions.shape[0]
+        num_vertices = mesh.vertices.shape[0]
 
         ### Get start vertices for geodesic tracing
         vertex_faces = mesh.v2t[:, 1]
-        vertex_bary = mesh.triangles[vertex_faces] == torch.arange(
-            mesh.positions.shape[0], dtype=torch.int32, device=mesh.positions.device
+        vertex_bary = mesh.faces[vertex_faces] == torch.arange(
+            mesh.vertices.shape[0], dtype=torch.int32, device=mesh.vertices.device
         ).unsqueeze(1)
         vertex_bary = vertex_bary.float()
         start_vertices = MeshPointBatch(
@@ -137,7 +137,7 @@ class AGC(nn.Module):
         directions = torch.tensor(
             [4.43948340493, 2.4309423923, -3.903940323],
             dtype=torch.float32,
-            device=mesh.positions.device,
+            device=mesh.vertices.device,
         )
         directions = directions.unsqueeze(0).expand(num_vertices, -1)  # [V, 3]
         directions = (
@@ -154,7 +154,7 @@ class AGC(nn.Module):
             2 * torch.pi,
             step=2 * torch.pi / self.n_theta,
             dtype=torch.float32,
-            device=mesh.positions.device,
+            device=mesh.vertices.device,
         )  # [n_theta]
         directions = batched_dir_rotation(
             directions, vertex_normals, rotation_angles
@@ -172,7 +172,7 @@ class AGC(nn.Module):
         )
 
         tri_idx = meshpoints.faces  # [V * num_traces * n_patches]
-        idx = mesh.triangles[tri_idx]  # [V * num_traces * n_patches, 3]
+        idx = mesh.faces[tri_idx]  # [V * num_traces * n_patches, 3]
         idx = idx.view(
             -1, self.n_patches, 3
         )  # Reshape to [V * num_traces, n_patches, 3]
@@ -182,7 +182,7 @@ class AGC(nn.Module):
         idx = idx.reshape(-1)  # [V * num_traces * in_channels * 3]
         channel_idx = (
             torch.arange(
-                self.in_channels, dtype=torch.long, device=mesh.positions.device
+                self.in_channels, dtype=torch.long, device=mesh.vertices.device
             )
             .view(1, 1, 1, self.in_channels, 1)
             .expand(num_vertices, self.n_rho, self.n_theta, self.in_channels, 3)

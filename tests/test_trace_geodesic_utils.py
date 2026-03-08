@@ -92,7 +92,6 @@ def test_barycentric_degenerate_triangle():
 
 # Tests for bary_is_edge
 
-
 def test_bary_edge_0_opposite_vertex_0():
     bary = torch.tensor([0.0, 0.5, 0.5])
     is_edge, edge_idx = bary_is_edge(bary, EPS)
@@ -123,7 +122,6 @@ def test_bary_not_on_edge():
 
 # Tests for bary_is_vert
 
-
 def test_bary_vertex_0():
     bary = torch.tensor([1.0, 0.0, 0.0])
     is_vert, vert_idx = bary_is_vert(bary, EPS)
@@ -153,7 +151,6 @@ def test_bary_not_on_vertex():
 
 
 # Tests for trace in triangle
-
 
 def test_trace_in_triangles_1():
     mesh = create_triangle()
@@ -220,7 +217,6 @@ def test_trace_in_triangles_3():
 
 # Tests for common_edge
 
-
 def test_common_edge_found():
     triangles = torch.tensor(
         [
@@ -281,7 +277,6 @@ def test_single_common_vertex():
 
 
 # Tests for signed_angle
-
 
 def test_signed_angle_zero():
     """

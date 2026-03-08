@@ -11,7 +11,7 @@ def create_triangle() -> Mesh:
     """Create a simple triangle mesh."""
 
     # Define vertices
-    positions = np.array(
+    vertices = np.array(
         [
             [0.0, 0.0, 0.0],
             [1.0, 0.0, 0.0],
@@ -23,7 +23,7 @@ def create_triangle() -> Mesh:
     # Define triangles (faces)
     triangles = np.array([[0, 1, 2]], dtype=np.int32)
 
-    mesh = Mesh(positions=positions, triangles=triangles)
+    mesh = Mesh(vertices=vertices, faces=triangles)
 
     return mesh
 
@@ -53,7 +53,7 @@ def create_tetrahedron() -> Mesh:
         dtype=np.int32,
     )
 
-    mesh = Mesh(positions=positions, triangles=triangles)
+    mesh = Mesh(vertices=positions, faces=triangles)
 
     return mesh
 
@@ -86,8 +86,8 @@ def load_mesh_from_trimesh(
     mesh.update_faces(~degenerate)
 
     return Mesh(
-        positions=mesh.vertices,
-        triangles=mesh.faces,
+        vertices=mesh.vertices,
+        faces=mesh.faces,
         adjacencies=None,
         triangle_normals=mesh.face_normals.copy(),
         v2t=None,

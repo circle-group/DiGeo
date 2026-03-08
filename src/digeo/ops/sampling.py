@@ -22,8 +22,8 @@ def uniform_sampling(mesh: Mesh, n_points: int) -> MeshPointBatch:
     MeshPointBatch
         The sampled points.
     """
-    tri = mesh.triangles
-    pos = mesh.positions
+    tri = mesh.faces
+    pos = mesh.vertices
 
     p0 = pos[tri[:, 0]]
     p1 = pos[tri[:, 1]]

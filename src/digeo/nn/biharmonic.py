@@ -164,7 +164,7 @@ class BiharmonicDistance(torch.nn.Module):
         self.eps = eps
 
         lapl, massvec = compute_mesh_laplacian(
-            mesh.positions.cpu().numpy(), mesh.triangles.cpu().numpy()
+            mesh.vertices.cpu().numpy(), mesh.faces.cpu().numpy()
         )
         evals, evecs = compute_eig_laplacian(lapl, massvec, k_eig=k_eig, eps=eps)
 
@@ -200,13 +200,13 @@ class BiharmonicDistance(torch.nn.Module):
             number of points).
         """
         point_evecs = interpolate_barycentric_attr(
-            self.mesh.triangles,
+            self.mesh.faces,
             points.faces,
             points.get_barycentric_coords(),
             self.evecs,
         )
         target_evecs = interpolate_barycentric_attr(
-            self.mesh.triangles,
+            self.mesh.faces,
             targets.faces,
             targets.get_barycentric_coords(),
             self.evecs,

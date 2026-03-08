@@ -47,8 +47,8 @@ def get_device_dtype(*args, **kwargs) -> Tuple[Optional[str], Optional[torch.dty
 class Mesh:
     def __init__(
         self,
-        positions: Union[NDArray, Tensor],
-        triangles: Union[NDArray, Tensor],
+        vertices: Union[NDArray, Tensor],
+        faces: Union[NDArray, Tensor],
         adjacencies: Optional[Union[NDArray, Tensor]] = None,
         triangle_normals: Optional[Union[NDArray, Tensor]] = None,
         v2t: Optional[Union[NDArray, Tensor]] = None,
@@ -56,18 +56,43 @@ class Mesh:
         device: str | torch.device = "cpu",
         dtype: torch.dtype = torch.float32,
     ):
+        """
+        Initialize a Mesh object with vertices, faces, and optional precomputed data.
+
+        Parameters
+        ----------
+        vertices: NDArray | Tensor
+            (V, 3) array of vertex positions.
+        faces: NDArray | Tensor
+            (F, 3) array of triangle vertex indices.
+        adjacencies: Optional[NDArray | Tensor]
+            (F, 3) stores the adjacent triangle indices for each triangle edge.
+        triangle_normals: Optional[NDArray | Tensor]
+            (F, 3) array of triangle normal vectors.
+        v2t: Optional[NDArray | Tensor]
+            (V, max_tris_per_vertex + 1) array mapping vertices to incident triangles.
+            The first column stores the number of incident triangles, followed by the
+            triangle indices.
+        vertex_normals: Optional[NDArray | Tensor]
+            (V, 3) array of vertex normal vectors.
+        device: str | torch.device
+            The device to store the mesh on.
+        dtype: torch.dtype
+            The data type for the vertex positions and normals.
+        """
+
         self.dtype: torch.dtype = dtype
-        self.positions = torch.as_tensor(
-            positions, dtype=dtype, device=device
+        self.vertices = torch.as_tensor(
+            vertices, dtype=dtype, device=device
         ).requires_grad_(False)
-        self.triangles = torch.as_tensor(
-            triangles, dtype=torch.int32, device=device
+        self.faces = torch.as_tensor(
+            faces, dtype=torch.int32, device=device
         ).requires_grad_(False)
 
         if vertex_normals is None:
             mesh_trimesh = trimesh.Trimesh(
-                vertices=self.positions.cpu().numpy(),
-                faces=self.triangles.cpu().numpy(),
+                vertices=self.vertices.cpu().numpy(),
+                faces=self.faces.cpu().numpy(),
             )
             vertex_normals = mesh_trimesh.vertex_normals
 
@@ -94,7 +119,7 @@ class Mesh:
             vertex_normals, dtype=dtype, device=device
         ).requires_grad_(False)
 
-        self.device: torch.device = self.positions.device
+        self.device: torch.device = self.vertices.device
 
     @overload
     def to(self, device: Union[str, torch.device]) -> "Mesh": ...
@@ -132,20 +157,20 @@ class Mesh:
         if dtype is None:
             dtype = self.dtype
 
-        self.positions = self.positions.to(device=device, dtype=dtype)
-        self.triangles = self.triangles.to(device=device)
+        self.vertices = self.vertices.to(device=device, dtype=dtype)
+        self.faces = self.faces.to(device=device)
         self.adjacencies = self.adjacencies.to(device=device)
         self.triangle_normals = self.triangle_normals.to(device=device, dtype=dtype)
         self.v2t = self.v2t.to(device=device)
         self.vertex_normals = self.vertex_normals.to(device=device, dtype=dtype)
 
-        self.device = self.positions.device
+        self.device = self.vertices.device
         self.dtype = dtype
 
         return self
 
     def _compute_adjacencies(self) -> NDArray[np.int32]:
-        triangles = self.triangles.cpu().numpy()
+        triangles = self.faces.cpu().numpy()
         num_triangles = len(triangles)
         adjacencies = -np.ones((num_triangles, 3), dtype=np.int32)
         edge_to_triangle = {}
@@ -162,8 +187,8 @@ class Mesh:
         return adjacencies
 
     def _compute_vertex_to_triangle_map(self) -> NDArray[np.int32]:
-        triangles = self.triangles.cpu().numpy()
-        num_vertices = self.positions.shape[0]
+        triangles = self.faces.cpu().numpy()
+        num_vertices = self.vertices.shape[0]
         v2t = [[] for _ in range(num_vertices)]
         max_len = 0
 
@@ -183,8 +208,13 @@ class MeshBatch(Mesh):
     def __init__(self, meshes: List[Mesh]):
         """
         Allows batched operations of meshes.
-        MeshPointsBatches must also be batched using the MeshBatch with batch_points
+        MeshPointsBatch must also be batched using the MeshBatch with batch_points
         and unbatch_points.
+
+        Paramseters
+        -----------
+        meshes: List[Mesh]
+            A list of Mesh objects to batch together.
 
         >>> mesh1 = load_mesh_from_file(path_to_mesh1, device=device)
         >>> mesh2 = load_mesh_from_file(path_to_mesh2, device=device)
@@ -211,7 +241,7 @@ class MeshBatch(Mesh):
 
         self.vertex_idx = torch.cumsum(
             torch.tensor(
-                [0] + [mesh.positions.shape[0] for mesh in meshes],
+                [0] + [mesh.vertices.shape[0] for mesh in meshes],
                 dtype=torch.int32,
                 device=device,
             ),
@@ -219,16 +249,16 @@ class MeshBatch(Mesh):
         ).requires_grad_(False)
         self.triangle_idx = torch.cumsum(
             torch.tensor(
-                [0] + [mesh.triangles.shape[0] for mesh in meshes],
+                [0] + [mesh.faces.shape[0] for mesh in meshes],
                 dtype=torch.int32,
                 device=device,
             ),
             dim=0,
         ).requires_grad_(False)
 
-        positions = torch.cat([mesh.positions for mesh in meshes], dim=0)
-        triangles = torch.cat(
-            [mesh.triangles + self.vertex_idx[i] for i, mesh in enumerate(meshes)],
+        vertices = torch.cat([mesh.vertices for mesh in meshes], dim=0)
+        faces = torch.cat(
+            [mesh.faces + self.vertex_idx[i] for i, mesh in enumerate(meshes)],
             dim=0,
         )
 
@@ -258,8 +288,8 @@ class MeshBatch(Mesh):
         vertex_normals = torch.cat([mesh.vertex_normals for mesh in meshes], dim=0)
 
         super().__init__(
-            positions=positions,
-            triangles=triangles,
+            vertices=vertices,
+            faces=faces,
             adjacencies=adjacencies,
             triangle_normals=triangle_normals,
             v2t=v2t,
@@ -269,7 +299,15 @@ class MeshBatch(Mesh):
         )
 
     def unbatch(self) -> List[Mesh]:
-        """Unbatch the mesh batch into a list of Mesh objects."""
+        """
+        Unbatch the mesh batch into a list of Mesh objects.
+
+        Returns
+        -------
+        List[Mesh]
+            A list of Mesh objects corresponding to the original meshes used to
+            create the batch.
+        """
         meshes = []
         for i in range(len(self)):
             start_vertex = self.vertex_idx[i]
@@ -287,8 +325,8 @@ class MeshBatch(Mesh):
             )
             meshes.append(
                 Mesh(
-                    positions=self.positions[start_vertex:end_vertex],
-                    triangles=self.triangles[start_triangle:end_triangle]
+                    vertices=self.vertices[start_vertex:end_vertex],
+                    faces=self.faces[start_triangle:end_triangle]
                     - start_vertex,
                     adjacencies=self.adjacencies[start_triangle:end_triangle]
                     - start_triangle,
@@ -305,6 +343,18 @@ class MeshBatch(Mesh):
         Batch a list of MeshPointBatch objects into a single MeshPointBatch.
         The output MeshPointBatch will be detached from the original MeshPointBatch
         objects.
+
+        Parameters
+        ----------
+        meshpoints: List[MeshPointBatch]
+            A list of MeshPointBatch objects to batch together. Where meshpoints[i]
+            corresponds to the points on mesh i in the MeshBatch.
+
+        Returns
+        -------
+        MeshPointBatch
+            A single MeshPointBatch containing all the points from the input batches,
+            with face indices adjusted to match the concatenated faces of the MeshBatch.
         """
         if not meshpoints:
             raise ValueError("meshpoints must contain at least one MeshPointBatch.")
@@ -325,6 +375,20 @@ class MeshBatch(Mesh):
     def unbatch_points(self, meshpoints: "MeshPointBatch") -> "List[MeshPointBatch]":
         """
         Unbatch a MeshPointBatch into a list of MeshPointBatch objects.
+
+        Parameters
+        ----------
+        meshpoints: MeshPointBatch
+            A MeshPointBatch containing points on the MeshBatch. The face indices in
+            meshpoints should correspond to the concatenated faces of the MeshBatch.
+
+        Returns
+        -------
+        List[MeshPointBatch]
+            A list of MeshPointBatch objects, where the i-th batch contains the points
+            corresponding to the i-th mesh in the MeshBatch. The face indices in each
+            batch will be adjusted to correspond to the original faces of the individual
+            meshes.
         """
         meshpoint_batches = []
         for i in range(len(self)):
@@ -381,8 +445,8 @@ class MeshBatch(Mesh):
         if dtype is None:
             dtype = self.dtype
 
-        self.positions = self.positions.to(device=device, dtype=dtype)
-        self.triangles = self.triangles.to(device=device)
+        self.vertices = self.vertices.to(device=device, dtype=dtype)
+        self.faces = self.faces.to(device=device)
         self.adjacencies = self.adjacencies.to(device=device)
         self.triangle_normals = self.triangle_normals.to(device=device, dtype=dtype)
         self.v2t = self.v2t.to(device=device)
@@ -409,8 +473,8 @@ class MeshBatch(Mesh):
             end_triangle = self.triangle_idx[idx + 1]
 
             return Mesh(
-                positions=self.positions[start_vertex:end_vertex],
-                triangles=self.triangles[start_triangle:end_triangle] - start_vertex,
+                vertices=self.vertices[start_vertex:end_vertex],
+                faces=self.faces[start_triangle:end_triangle] - start_vertex,
                 adjacencies=self.adjacencies[start_triangle:end_triangle],
                 triangle_normals=self.triangle_normals[start_triangle:end_triangle],
                 v2t=self.v2t[start_vertex:end_vertex],
@@ -437,9 +501,9 @@ class MeshPoint:
     def interpolate(self, mesh: Mesh) -> Tensor:
         face = self.face
         uv = self.uv
-        p0 = mesh.positions[mesh.triangles[face, 0]]
-        p1 = mesh.positions[mesh.triangles[face, 1]]
-        p2 = mesh.positions[mesh.triangles[face, 2]]
+        p0 = mesh.vertices[mesh.faces[face, 0]]
+        p1 = mesh.vertices[mesh.faces[face, 1]]
+        p2 = mesh.vertices[mesh.faces[face, 2]]
         pos = (1 - uv[0] - uv[1]) * p0 + uv[0] * p1 + uv[1] * p2
         return pos
 
@@ -532,10 +596,28 @@ class MeshPointBatch:
     def interpolate(self, mesh: Mesh, return_batch: bool = False) -> Tensor:
         """
         Interpolate the positions of the mesh points in the batch.
+
+        Parameters
+        ----------
+        mesh: Mesh
+            The mesh on which the points lie. The face indices in self.faces should
+            correspond to the faces of this mesh.
+        return_batch: bool (default=False)
+            If True, return the interpolated positions as a batch of shape (B, N, 3),
+            where B is the number of meshes in the batch (if mesh is a MeshBatch)
+            and N is the number of points in the batch. If False, return a tensor of
+            shape (N, 3) containing the interpolated positions of the points.
+
+        Returns
+        -------
+        Tensor
+            The interpolated positions of the mesh points. Shape is (N, 3) if
+            return_batch is False, or (B, N, 3) if return_batch is True and
+            mesh is a MeshBatch.
         """
-        p0 = mesh.positions[mesh.triangles[self.faces, 0]]
-        p1 = mesh.positions[mesh.triangles[self.faces, 1]]
-        p2 = mesh.positions[mesh.triangles[self.faces, 2]]
+        p0 = mesh.vertices[mesh.faces[self.faces, 0]]
+        p1 = mesh.vertices[mesh.faces[self.faces, 1]]
+        p2 = mesh.vertices[mesh.faces[self.faces, 2]]
         pos = (
             (1 - self.uvs[:, 0:1] - self.uvs[:, 1:2]) * p0
             + self.uvs[:, 0:1] * p1
@@ -556,6 +638,12 @@ class MeshPointBatch:
     def get_barycentric_coords(self) -> Tensor:
         """
         Get the barycentric coordinates of the mesh points in the batch.
+
+        Returns
+        -------
+        Tensor
+            A tensor of shape (N, 3) containing the barycentric coordinates of each
+            point in the batch.
         """
         return torch.cat(
             [

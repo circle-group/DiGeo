@@ -214,17 +214,17 @@ class StraighestGeodesicsGFD(torch.autograd.Function):
         mesh = ctx.mesh
         eps = StraighestGeodesicsGFD.EPS
 
-        p0 = mesh.positions[mesh.triangles[x0.faces][:, 0]]
-        p1 = mesh.positions[mesh.triangles[x0.faces][:, 1]]
-        p2 = mesh.positions[mesh.triangles[x0.faces][:, 2]]
+        p0 = mesh.vertices[mesh.faces[x0.faces][:, 0]]
+        p1 = mesh.vertices[mesh.faces[x0.faces][:, 1]]
+        p2 = mesh.vertices[mesh.faces[x0.faces][:, 2]]
         x0_e1 = p1 - p0
         x0_e2 = p2 - p0
         x0_e1 = x0_e1 / torch.norm(x0_e1, dim=1, keepdim=True)  # (B, 3)
         x0_e2 = x0_e2 / torch.norm(x0_e2, dim=1, keepdim=True)  # (B, 3)
 
-        p0 = mesh.positions[mesh.triangles[x1.faces][:, 0]]
-        p1 = mesh.positions[mesh.triangles[x1.faces][:, 1]]
-        p2 = mesh.positions[mesh.triangles[x1.faces][:, 2]]
+        p0 = mesh.vertices[mesh.faces[x1.faces][:, 0]]
+        p1 = mesh.vertices[mesh.faces[x1.faces][:, 1]]
+        p2 = mesh.vertices[mesh.faces[x1.faces][:, 2]]
         x1_e1 = p1 - p0
         x1_e2 = p2 - p0
         T1 = torch.stack((x1_e1, x1_e2), dim=-1)  # (B, 3, 2)
@@ -347,9 +347,9 @@ class StraighestGeodesicsJVP(torch.autograd.Function):
         v = v - torch.sum(v * n, dim=-1, keepdim=True) * n
         v = v_norm * (v / v.norm(dim=-1, keepdim=True))
 
-        p0 = mesh.positions[mesh.triangles[x1.faces][:, 0]]
-        p1 = mesh.positions[mesh.triangles[x1.faces][:, 1]]
-        p2 = mesh.positions[mesh.triangles[x1.faces][:, 2]]
+        p0 = mesh.vertices[mesh.faces[x1.faces][:, 0]]
+        p1 = mesh.vertices[mesh.faces[x1.faces][:, 1]]
+        p2 = mesh.vertices[mesh.faces[x1.faces][:, 2]]
         x1_e1 = p1 - p0
         x1_e2 = p2 - p0
         T1 = torch.stack((x1_e1, x1_e2), dim=-1)  # (B, 3, 2)
@@ -381,9 +381,9 @@ class StraighestGeodesicsJVP(torch.autograd.Function):
         n = mesh.triangle_normals[x0.faces]
         grad_v = grad_v - torch.sum(grad_v * n, dim=-1, keepdim=True) * n
 
-        p0 = mesh.positions[mesh.triangles[x0.faces][:, 0]]
-        p1 = mesh.positions[mesh.triangles[x0.faces][:, 1]]
-        p2 = mesh.positions[mesh.triangles[x0.faces][:, 2]]
+        p0 = mesh.vertices[mesh.faces[x0.faces][:, 0]]
+        p1 = mesh.vertices[mesh.faces[x0.faces][:, 1]]
+        p2 = mesh.vertices[mesh.faces[x0.faces][:, 2]]
         x0_e1 = p1 - p0
         x0_e2 = p2 - p0
 
@@ -477,10 +477,10 @@ def tri_bary_coords(p0: Tensor, p1: Tensor, p2: Tensor, p: Tensor) -> Tensor:
 
 
 def get_meshpoints(mesh: Mesh, faces: Tensor, points: Tensor) -> MeshPointBatch:
-    triangle = mesh.triangles[faces]
-    p0 = mesh.positions[triangle[:, 0]]
-    p1 = mesh.positions[triangle[:, 1]]
-    p2 = mesh.positions[triangle[:, 2]]
+    triangle = mesh.faces[faces]
+    p0 = mesh.vertices[triangle[:, 0]]
+    p1 = mesh.vertices[triangle[:, 1]]
+    p2 = mesh.vertices[triangle[:, 2]]
     bary = tri_bary_coords(p0, p1, p2, points)
     return MeshPointBatch(faces=faces, uvs=bary[:, 1:])
 

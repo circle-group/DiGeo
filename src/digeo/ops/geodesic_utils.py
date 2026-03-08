@@ -139,7 +139,7 @@ def trace_around_hole(
             "Current barycentric coordinates do not correspond to a vertex or edge."
         )
 
-    dir = mesh.positions[mesh.triangles[curr_tri][next_vertex]] - curr_pos
+    dir = mesh.vertices[mesh.faces[curr_tri][next_vertex]] - curr_pos
     length_dir = length(dir)
     if length_dir > max_len:
         dir = dir / length_dir * max_len
@@ -159,9 +159,9 @@ def trace_in_triangles(
     eps: float,
 ) -> Tuple[Tensor, Tensor]:
     """Trace a straight line within triangles."""
-    p0 = mesh.positions[mesh.triangles[curr_tri][0]]
-    p1 = mesh.positions[mesh.triangles[curr_tri][1]]
-    p2 = mesh.positions[mesh.triangles[curr_tri][2]]
+    p0 = mesh.vertices[mesh.faces[curr_tri][0]]
+    p1 = mesh.vertices[mesh.faces[curr_tri][1]]
+    p2 = mesh.vertices[mesh.faces[curr_tri][2]]
     dir_bary = tri_edge_coords(p0, p1, p2, dir_3d)
 
     best_t = 10000.0
@@ -189,7 +189,7 @@ def trace_in_triangles(
         for i in range(3):
             if next_bary[i] > 0.5:
                 next_bary[i] = 1.0
-                next_pos = mesh.positions[mesh.triangles[curr_tri][i]]
+                next_pos = mesh.vertices[mesh.faces[curr_tri][i]]
             else:
                 next_bary[i] = 0.0
 
@@ -247,22 +247,22 @@ def compute_parallel_transport_edge(
         return dir_3d, curr_normal
 
     # Find the common edge between triangles
-    common_e, other_v1, other_v2 = common_edge(mesh.triangles, curr_tri, next_tri)
+    common_e, other_v1, other_v2 = common_edge(mesh.faces, curr_tri, next_tri)
 
     if len(common_e) == 0:
         return dir_3d, curr_normal  # No common edge found
 
     # Get the normals of both triangles
-    p0 = mesh.positions[common_e[0]]
-    p1 = mesh.positions[common_e[1]]
-    p2_curr = mesh.positions[other_v1]
-    p2_next = mesh.positions[other_v2]
+    p0 = mesh.vertices[common_e[0]]
+    p1 = mesh.vertices[common_e[1]]
+    p2_curr = mesh.vertices[other_v1]
+    p2_next = mesh.vertices[other_v2]
 
     n1 = triangle_normal(p0, p1, p2_curr)
     n2 = triangle_normal(p1, p0, p2_next)
 
     # Get the edge direction
-    edge_dir = mesh.positions[common_e[1]] - mesh.positions[common_e[0]]
+    edge_dir = mesh.vertices[common_e[1]] - mesh.vertices[common_e[0]]
     axis = normalize(edge_dir)
 
     # Compute the rotation angle
@@ -295,16 +295,16 @@ def compute_parallel_transport_vertex_hole(
         # Get the vertices of the triangle
         vertices = [0, 0]
         idx = 0
-        for v_t in mesh.triangles[tri]:
+        for v_t in mesh.faces[tri]:
             v = int(v_t.item())
             if v != vertex_id:
                 vertices[idx] = v
                 idx += 1
 
         # Compute the normal of the triangle
-        p0 = mesh.positions[vertex_id]
-        p1 = mesh.positions[vertices[0]]
-        p2 = mesh.positions[vertices[1]]
+        p0 = mesh.vertices[vertex_id]
+        p1 = mesh.vertices[vertices[0]]
+        p2 = mesh.vertices[vertices[1]]
         e1 = normalize(p1 - p0)
         e2 = normalize(p2 - p0)
 
@@ -335,8 +335,8 @@ def compute_parallel_transport_vertex_hole(
                 continue
 
             for k, (v1, v2) in enumerate(edges):
-                v1 = int(mesh.triangles[tri][v1].item())
-                v2 = int(mesh.triangles[tri][v2].item())
+                v1 = int(mesh.faces[tri][v1].item())
+                v2 = int(mesh.faces[tri][v2].item())
                 if v1 != vertex_id and v2 != vertex_id:
                     continue
 
@@ -373,7 +373,7 @@ def compute_parallel_transport_vertex(
     for tri_id in mesh.v2t[vertex_id, 1 : len_connected_triangles + 1]:
         vertices = [0, 0]
         idx = 0
-        for v_t in mesh.triangles[tri_id]:
+        for v_t in mesh.faces[tri_id]:
             v = int(v_t.item())
             if v != vertex_id:
                 vertices[idx] = v
@@ -382,8 +382,8 @@ def compute_parallel_transport_vertex(
         n = mesh.triangle_normals[tri_id]
 
         angle = signed_angle(
-            mesh.positions[vertices[0]] - mesh.positions[vertex_id],
-            mesh.positions[vertices[1]] - mesh.positions[vertex_id],
+            mesh.vertices[vertices[0]] - mesh.vertices[vertex_id],
+            mesh.vertices[vertices[1]] - mesh.vertices[vertex_id],
             n,
         )
         total_angle += abs(angle)
@@ -393,14 +393,14 @@ def compute_parallel_transport_vertex(
     # get initial angle
     dir_3d = -dir_3d
     v1 = -1
-    for v in mesh.triangles[curr_tri]:
+    for v in mesh.faces[curr_tri]:
         if v.item() != vertex_id:
             v1 = int(v.item())
             break
-    v2 = (set(mesh.triangles[curr_tri].tolist()) - {v1, vertex_id}).pop()
-    p0 = mesh.positions[vertex_id]
-    p1 = mesh.positions[v1]
-    p2 = mesh.positions[v2]
+    v2 = (set(mesh.faces[curr_tri].tolist()) - {v1, vertex_id}).pop()
+    p0 = mesh.vertices[vertex_id]
+    p1 = mesh.vertices[v1]
+    p2 = mesh.vertices[v2]
     n = triangle_normal(p0, p1, p2)
     if dot(n, curr_normal) > 0:
         normal_sign = 1
@@ -414,17 +414,17 @@ def compute_parallel_transport_vertex(
 
     while angle < half_angle:
         # Get next triangle
-        v2 = (set(mesh.triangles[curr_tri].tolist()) - {v1, vertex_id}).pop()
+        v2 = (set(mesh.faces[curr_tri].tolist()) - {v1, vertex_id}).pop()
 
-        p0 = mesh.positions[vertex_id]
-        p1 = mesh.positions[v1]
-        p2 = mesh.positions[v2]
+        p0 = mesh.vertices[vertex_id]
+        p1 = mesh.vertices[v1]
+        p2 = mesh.vertices[v2]
         n = triangle_normal(p0, p1, p2)
 
         tri_angle = abs(
             signed_angle(
-                mesh.positions[v1] - mesh.positions[vertex_id],
-                mesh.positions[v2] - mesh.positions[vertex_id],
+                mesh.vertices[v1] - mesh.vertices[vertex_id],
+                mesh.vertices[v2] - mesh.vertices[vertex_id],
                 n,
             )
         )
@@ -437,7 +437,7 @@ def compute_parallel_transport_vertex(
             return new_dir, curr_tri, normal_sign * n
 
         local_edge_idx = -1
-        for idx, v_t in enumerate(mesh.triangles[curr_tri]):
+        for idx, v_t in enumerate(mesh.faces[curr_tri]):
             v = int(v_t.item())
             if v != v2 and v != vertex_id:
                 local_edge_idx = (idx + 1) % 3
@@ -447,7 +447,7 @@ def compute_parallel_transport_vertex(
         if next_tri == -1:
             angle_diff = half_angle - angle
             axis = n
-            edge = normalize(mesh.positions[v1] - mesh.positions[vertex_id])
+            edge = normalize(mesh.vertices[v1] - mesh.vertices[vertex_id])
             new_dir = rotate_vector(edge, angle_diff, axis)
             return new_dir, curr_tri, normal_sign * n
 
@@ -474,11 +474,11 @@ def get_next_bary(
     next_bary = torch.zeros(3)
 
     for i in range(3):
-        v = mesh.triangles[curr_tri, i].item()
+        v = mesh.faces[curr_tri, i].item()
         if v == common[0] or v == common[1]:
             # find index of v in next_triangle
             for j in range(3):
-                if mesh.triangles[next_tri, j].item() == v:
+                if mesh.faces[next_tri, j].item() == v:
                     next_bary[j] = curr_bary[i]
                     break
 
@@ -496,7 +496,7 @@ def rotate_vector(v: Tensor, angle: float, n: Tensor) -> Tensor:
     )
 
 
-def project_vertex_dir(mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
+def project_vertex_dir(mesh: Mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
     """
     select edge with minimal projection to vertex tangent plane, this will be the basis
     calculate angle between the basis and dir
@@ -507,17 +507,17 @@ def project_vertex_dir(mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
     len_connected_triangles = mesh.v2t[vertex_id, 0]
     total_angle = 0.0
     best_proj, best_tri, best_v = 100000, -1, -1
-    v_pos = mesh.positions[vertex_id]
+    v_pos = mesh.vertices[vertex_id]
 
     for tri_id in mesh.v2t[vertex_id, 1 : len_connected_triangles + 1]:
         for k in range(3):
-            if int(mesh.triangles[tri_id][k].item()) == vertex_id:
-                v1 = int(mesh.triangles[tri_id][(k + 1) % 3].item())
-                v2 = int(mesh.triangles[tri_id][(k + 2) % 3].item())
+            if int(mesh.faces[tri_id][k].item()) == vertex_id:
+                v1 = int(mesh.faces[tri_id][(k + 1) % 3].item())
+                v2 = int(mesh.faces[tri_id][(k + 2) % 3].item())
                 break
 
-        e1 = mesh.positions[v1] - v_pos
-        e2 = mesh.positions[v2] - v_pos
+        e1 = mesh.vertices[v1] - v_pos
+        e2 = mesh.vertices[v2] - v_pos
         e1 = normalize(e1)
         e2 = normalize(e2)
 
@@ -535,7 +535,7 @@ def project_vertex_dir(mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
             best_tri = tri_id
             best_v = v2
 
-    mesh_edge = mesh.positions[best_v] - mesh.positions[vertex_id]
+    mesh_edge = mesh.vertices[best_v] - mesh.vertices[vertex_id]
     tangent_edge = mesh_edge - dot(mesh_edge, v_normal) * v_normal
 
     tangent_angle = signed_angle(tangent_edge, dir, v_normal) % (2 * torch.pi)
@@ -545,14 +545,14 @@ def project_vertex_dir(mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
     tri = best_tri
     v1 = best_v
     for k in range(3):
-        v_k = int(mesh.triangles[tri][k].item())
+        v_k = int(mesh.faces[tri][k].item())
         if v_k != vertex_id and v_k != v1:
             v2 = v_k
             break
 
     while angle < mesh_angle:
-        e1 = mesh.positions[v1] - mesh.positions[vertex_id]
-        e2 = mesh.positions[v2] - mesh.positions[vertex_id]
+        e1 = mesh.vertices[v1] - mesh.vertices[vertex_id]
+        e2 = mesh.vertices[v2] - mesh.vertices[vertex_id]
         tri_angle = abs(signed_angle(e1, e2, mesh.triangle_normals[tri]))
 
         if tri_angle + angle >= mesh_angle:
@@ -563,22 +563,22 @@ def project_vertex_dir(mesh, vertex_id: int, dir: Tensor) -> Tuple[int, Tensor]:
 
         angle += tri_angle
         for k in range(3):
-            if mesh.triangles[tri][k].item() == v1:
+            if mesh.faces[tri][k].item() == v1:
                 next_tri = mesh.adjacencies[tri, (k + 1) % 3]
 
         if next_tri == -1:
             # No adjacent triangle, stop here
-            return tri, normalize(mesh.positions[v2] - mesh.positions[vertex_id])
+            return tri, normalize(mesh.vertices[v2] - mesh.vertices[vertex_id])
 
         tri = next_tri
         v1 = v2
         for k in range(3):
-            v_k = int(mesh.triangles[tri][k].item())
+            v_k = int(mesh.faces[tri][k].item())
             if v_k != vertex_id and v_k != v1:
                 v2 = v_k
                 break
 
-    return tri, normalize(mesh.positions[v2] - mesh.positions[vertex_id])
+    return tri, normalize(mesh.vertices[v2] - mesh.vertices[vertex_id])
 
 
 @torch.no_grad()
@@ -610,7 +610,7 @@ def straightest_geodesic(
         [1 - start.uv[0] - start.uv[1], start.uv[0], start.uv[1]]
     )
     is_vert_bary, vert_idx = bary_is_vert(curr_bary, eps)
-    v_id = int(mesh.triangles[start.face][vert_idx].item())
+    v_id = int(mesh.faces[start.face][vert_idx].item())
     if is_vert_bary:
         current_normal = mesh.vertex_normals[v_id]
         dir = project_vec(start_dir, current_normal)
@@ -618,7 +618,7 @@ def straightest_geodesic(
         curr_tri, dir = project_vertex_dir(mesh, v_id, dir)
         uv_coord = torch.zeros(2)
         for k in range(1, 3):
-            if mesh.triangles[curr_tri][k].item() == v_id:
+            if mesh.faces[curr_tri][k].item() == v_id:
                 uv_coord[k - 1] = 1.0
         curr_point = MeshPoint(curr_tri, uv_coord)
         curr_bary = curr_point.get_barycentric_coords()
@@ -711,7 +711,7 @@ def straightest_geodesic(
         if is_vert_bary:
             vertex_crossings += 1
             # Point is on a vertex
-            v_idx = int(mesh.triangles[curr_tri][vert_idx].item())
+            v_idx = int(mesh.faces[curr_tri][vert_idx].item())
 
             # Transport the direction to the next triangle
             hole_parallel_transport = False
@@ -728,9 +728,9 @@ def straightest_geodesic(
                 )
 
             # Compute barycentric coordinates in the adjacent triangle
-            p0_adj = mesh.positions[mesh.triangles[next_tri][0]]
-            p1_adj = mesh.positions[mesh.triangles[next_tri][1]]
-            p2_adj = mesh.positions[mesh.triangles[next_tri][2]]
+            p0_adj = mesh.vertices[mesh.faces[next_tri][0]]
+            p1_adj = mesh.vertices[mesh.faces[next_tri][1]]
+            p2_adj = mesh.vertices[mesh.faces[next_tri][2]]
             next_bary = torch.zeros(3)
             dist = [
                 (p0_adj - next_pos) @ (p0_adj - next_pos),
@@ -778,7 +778,7 @@ def straightest_geodesic(
             else:
                 is_near_hole = False
                 # Get the common edge vertices
-                e, _, _ = common_edge(mesh.triangles, curr_tri, adj_tri)
+                e, _, _ = common_edge(mesh.faces, curr_tri, adj_tri)
 
                 if len(e) == 0:
                     # No common edge found
