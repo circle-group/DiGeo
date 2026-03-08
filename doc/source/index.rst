@@ -50,3 +50,18 @@ DiGeo
       .. image:: /_static/agc_seg.png
          :class: example-thumb
          :alt: AGC segmentation samples
+
+
+Citing DiGeo
+------------
+
+If you use DiGeo in your research, please consider citing the following paper:
+
+.. code-block:: bibtex
+
+   @inproceedings{verninas2026disgeod,
+      title={Parallelised Differentiable Straightest Geodesics for 3D Meshes},
+      author={Verninas, Hippolyte and Korkmaz, Caner and Zafeiriou, Stefanos and Birdal, Tolga and Foti, Simone},
+      booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+      year={2026}
+   }
