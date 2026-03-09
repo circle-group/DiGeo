@@ -1,7 +1,7 @@
 import torch
 import time
 from tqdm import tqdm
-from typing import Tuple
+from typing import Tuple, Any
 
 from digeo import Mesh, MeshPointBatch
 from digeo.optim.utils import MeshLossFunc, line_search
@@ -18,9 +18,52 @@ def mesh_lbfgs(
     min_rel_improvement: float = 1e-5,
     patience: int = 3,
     eps: float = 1e-6,
-) -> Tuple[MeshPointBatch, dict]:
+) -> Tuple[MeshPointBatch, dict[str, Any]]:
     """
-    Mesh-LBFGS optimizer with early stopping.
+    Mesh-LBFGS optimiser with early stopping.
+
+    Parameters
+    ----------
+    mesh: Mesh
+        The mesh used for the optimisation.
+    x: MeshPointBatch
+        The initial points on the mesh to optimize.
+    loss_func: MeshLossFunc
+        The loss function to optimize.
+    max_iter: int
+        The maximum number of iterations (default: 100).
+    list_size: int
+        The size of the history list for LBFGS (default: 20).
+    lr: float
+        The initial learning rate for the line search (default: 1.0).
+    tol: float
+        The tolerance for the stopping criterion based on the gradient norm
+        (default: 1e-6).
+    min_rel_improvement: float
+        The minimum relative improvement in the loss for early stopping
+        (default: 1e-5).
+    patience: int
+        The number of iterations to wait for an improvement before stopping
+        (default: 3).
+    eps: float
+        A small constant to prevent division by zero in the LBFGS update
+        (default: 1e-6).
+
+    Returns
+    -------
+    x': MeshPointBatch
+        The optimized points on the mesh.
+    logs: dict[str, Any]
+        A dictionary containing the information to log, where the keys are the
+        names of the metrics and the values are the corresponding values to log.
+        By default, the logs contain:
+
+        - ``"loss"`` (List[float]): The loss value at each iteration.
+        - ``"time"`` (float): The total time taken for the optimization.
+        - ``"function_calls"`` (List[int]): The total number of function calls at
+          each iteration.
+        - ``"step_size"`` (List[float]): The step size at each iteration.
+        - ``"mean_dir"`` (List[float]): The mean direction norm at each iteration.
     """
     loss, grad = loss_func(mesh, x)
 

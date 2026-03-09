@@ -541,6 +541,8 @@ def trace_geodesics(
     MeshPointBatch, GeodesicInfo
         The endpoints of the geodesic traces and geodesic information.
 
+    Examples
+    --------
     >>> mesh = load_mesh_from_file(path_to_mesh, device=device)
     >>> start_meshpoints = uniform_sampling(mesh, N).to(device)
     >>> start_directions = torch.randn((N, 3), dtype=torch.float32).to(device)

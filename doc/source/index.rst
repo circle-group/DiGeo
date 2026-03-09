@@ -28,7 +28,7 @@ Examples
       :link-type: doc
 
       Partition complex meshes with Geodesic Centroidal Voronoi Tessellation
-      and the Mesh-LBFGS optimizer.
+      and the Mesh-LBFGS optimiser.
 
       .. image:: /_static/gcvt_examples.png
          :class: example-thumb

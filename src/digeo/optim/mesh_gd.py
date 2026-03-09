@@ -19,7 +19,48 @@ def mesh_gd(
     patience=3,
 ) -> Tuple[MeshPointBatch, dict]:
     """
-    Gradient descent optimizer with line search and early stopping.
+    Gradient descent optimiser with line search and early stopping.
+
+    Parameters
+    ----------
+    mesh: Mesh
+        The mesh used for the optimisation.
+    x: MeshPointBatch
+        The initial points on the mesh to optimize.
+    loss_func: MeshLossFunc
+        The loss function to optimize.
+    use_line_search: bool
+        Whether to use line search to find the optimal step size at each iteration
+        (default: True).
+    max_iter: int
+        The maximum number of iterations (default: 100).
+    lr: float
+        The initial learning rate for the line search (default: 1.0).
+    tol: float
+        The tolerance for the stopping criterion based on the gradient norm
+        (default: 1e-6).
+    min_rel_improvement: float
+        The minimum relative improvement in the loss for early stopping
+        (default: 1e-5).
+    patience: int
+        The number of iterations to wait for an improvement before stopping
+        (default: 3).
+
+    Returns
+    -------
+    x': MeshPointBatch
+        The optimized points on the mesh.
+    logs: dict[str, Any]
+        A dictionary containing the information to log, where the keys are the
+        names of the metrics and the values are the corresponding values to log.
+        By default, the logs contain:
+
+        - ``"loss"`` (List[float]): The loss value at each iteration.
+        - ``"time"`` (float): The total time taken for the optimization.
+        - ``"function_calls"`` (List[int]): The total number of function calls at
+          each iteration.
+        - ``"step_size"`` (List[float]): The step size at each iteration.
+        - ``"mean_dir"`` (List[float]): The mean direction norm at each iteration.
     """
     loss, grad = loss_func(mesh, x)
     total_function_calls = 1
