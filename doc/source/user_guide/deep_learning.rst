@@ -6,6 +6,10 @@ Deep Learning Modules
 Adaptive Geodesic Convolution (AGC)
 -----------------------------------
 
+.. figure:: /_static/agcn_filters.svg
+    :align: center
+    :width: 60%
+
 The Adaptive Geodesic Convolution (AGC) module provides a way to perform convolution operations on meshes, by computing geodesic patches around each vertex and applying a learnable filter to these patches. The size of the patches is also learned during training, allowing the model to adapt to the local geometry of the mesh.
 
 
