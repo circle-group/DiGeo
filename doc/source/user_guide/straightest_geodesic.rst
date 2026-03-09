@@ -3,6 +3,14 @@
 Straightest geodesic
 ====================
 
+In continuous Riemannian geometry, a geodesic is defined by having zero covariant acceleration, :math:`\nabla_{\dot{\gamma}(t)}\dot{\gamma}(t)=0`. On discrete 3D meshes, this concept is adapted using the angle preservation criteria. To maintain a straight path, the left and right surface angles must remain equal
+(:math:`\theta_l = \theta_r`) for every point :math:`p` along the curve as it iteratively crosses faces, edges, and vertices.
+
+.. figure:: /_static/angles.svg
+    :align: center
+    :width: 35%
+
+
 Tracing geodesics
 -----------------
 
@@ -33,22 +41,43 @@ Differentiation methods
 
 There exists different methods to compute the gradient of the geodesic tracing operation, which can be specified with the ``gradient`` argument of :func:`digeo.ops.trace_geodesics`:
 
-``"none"``:
+**No gradient** (``"none"``)
+
 No gradient is computed.
 
-``"ep"``:
-Uses the Extrinsic Proxy method, which computes the gradient by parallel transporting the point along the geodesic and differentiating through the parallel transport.
+
+**Extrinsic Proxy** (``"ep"``)
+
+.. figure:: /_static/EP_info.svg
+    :align: center
+    :width: 30%
+
+The Extrinsic Proxy method computes the gradient by parallel transporting the point along the geodesic and differentiating through the parallel transport.
 This method is the most efficient, but can be less accurate than the following methods.
 
-``"gfd"``:
-Uses Geodesic Finite Differences, which computes the gradient by finite differencing the geodesic tracing operation.
+**Geodesic Finite Differences** (``"gfd"``)
+
+.. raw:: html
+
+   <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px; background: none; margin: 20px 0;">
+       <div style="flex: 1; text-align: center;">
+           <img src="../_static/Jp_info.svg" style="width: 60%;" alt="Jp info">
+       </div>
+       <div style="flex: 1; text-align: center;">
+           <img src="../_static/Jv_info.svg" style="width: 60%;" alt="Jv info">
+       </div>
+   </div>
+
+The Geodesic Finite Differences, method computes the gradient by finite differencing the geodesic tracing operation.
 This method is more accurate than the extrinsic proxy method, but is also less efficient.
 
-``"abfd"``:
-Uses the Adjoint Backward Finite Differences method, which computes the gradient by backtracking through the geodesic tracing operation using the Jacobian-vector product. This method is experimental and may cause undesirable behaviors when the mesh presents regions of high curvature.
+**Adjoint Backward Finite Differences** (``"abfd"``)
 
+The Adjoint Backward Finite Differences method computes the gradient by backtracking through the geodesic tracing operation using the Jacobian-vector product.
 
-.. TODO: add plots comparing the different methods, and a more detailed explanation of how they work.
+.. warning::
+
+    The ``"abfd"`` method is experimental and may cause undesirable behaviors when the mesh presents regions of high curvature.
 
 
 Parallel transport
