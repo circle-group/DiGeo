@@ -20,8 +20,8 @@ def straightest_geodesics(
 
     geodesic_result, debug_tensor = (
         torch.ops.geodesic_utils.straightest_geodesics.default(
-            mesh.positions,
-            mesh.triangles,
+            mesh.vertices,
+            mesh.faces,
             mesh.adjacencies,
             mesh.triangle_normals,
             mesh.v2t,

@@ -15,9 +15,9 @@ def test_mesh():
         [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]], dtype=torch.int32
     )
 
-    mesh = Mesh(positions=vertices, triangles=faces)
-    assert mesh.positions.shape == (4, 3), "Mesh positions shape is incorrect."
-    assert mesh.triangles.shape == (4, 3), "Mesh triangles shape is incorrect."
+    mesh = Mesh(vertices=vertices, faces=faces)
+    assert mesh.vertices.shape == (4, 3), "Mesh positions shape is incorrect."
+    assert mesh.faces.shape == (4, 3), "Mesh triangles shape is incorrect."
     assert mesh.triangle_normals.shape == (4, 3), (
         "Mesh triangle normals shape is incorrect."
     )
@@ -40,11 +40,11 @@ def test_mesh_batch_shape():
     assert mesh_batch.triangle_idx.shape == (num_meshes + 1,), (
         "Mesh batch triangle index shape is incorrect."
     )
-    assert mesh_batch.positions.shape == (num_meshes * 4, 3), (
-        "Mesh batch positions shape is incorrect."
+    assert mesh_batch.vertices.shape == (num_meshes * 4, 3), (
+        "Mesh batch vertices shape is incorrect."
     )
-    assert mesh_batch.triangles.shape == (num_meshes * 4, 3), (
-        "Mesh batch triangles shape is incorrect."
+    assert mesh_batch.faces.shape == (num_meshes * 4, 3), (
+        "Mesh batch faces shape is incorrect."
     )
 
     mesh_list = mesh_batch.unbatch()
@@ -64,10 +64,10 @@ def test_mesh_unbatch():
         assert isinstance(mesh_list[i], Mesh), (
             f"Unbatched mesh {i} is not of type Mesh."
         )
-        assert torch.allclose(mesh_list[i].positions, meshes[i].positions), (
+        assert torch.allclose(mesh_list[i].vertices, meshes[i].vertices), (
             f"Unbatched mesh {i} positions do not match."
         )
-        assert torch.allclose(mesh_list[i].triangles, meshes[i].triangles), (
+        assert torch.allclose(mesh_list[i].faces, meshes[i].faces), (
             f"Unbatched mesh {i} triangles do not match."
         )
         assert torch.allclose(
