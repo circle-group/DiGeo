@@ -502,6 +502,8 @@ def trace_geodesics(
     """
     Computes the straightest geodesic traces.
 
+    For a detailed description, see :ref:`straightest_geodesic` in the user guide.
+
     Parameters
     ----------
     mesh : Mesh
