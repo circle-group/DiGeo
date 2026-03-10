@@ -69,11 +69,11 @@ This method is the most efficient, but can be less accurate than the following m
    </div>
 
 The Geodesic Finite Differences, method computes the gradient by finite differencing the geodesic tracing operation.
-This method is more accurate than the extrinsic proxy method, but is also less efficient.
+This method is more accurate than the extrinsic proxy method, but is also less efficient since it requires additional geodesic tracing operations to compute the gradient.
 
 **Adjoint Backward Finite Differences** (``"abfd"``)
 
-The Adjoint Backward Finite Differences method computes the gradient by backtracking through the geodesic tracing operation using the Jacobian-vector product.
+The Adjoint Backward Finite Differences method computes gradients by perturbing the endpoint and using parallel transport to map the perturbation back to the starting point.
 
 .. warning::
 
