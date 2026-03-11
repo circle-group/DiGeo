@@ -39,11 +39,11 @@ jobs:
       if: contains(github.event.pull_request.labels.*.name, 'test-pypi')
       shell: bash
       run: |
-        # This replaces 'name = "digeo"' with 'name = "digeo-test"'
-        # Adjust the filename if you use setup.py instead of pyproject.toml
-        sed -i 's/name = "digeo"/name = "digeo-test"/g' pyproject.toml
+        # Using -i.bak makes it compatible with both GNU (Linux/Windows) and BSD (macOS) sed
+        sed -i.bak 's/name = "digeo"/name = "digeo-test"/g' pyproject.toml
         echo "Renamed package to digeo-test in pyproject.toml"
-        sed -i 's/library_name = "digeo"/library_name = "digeo-test"/g' setup.py
+
+        sed -i.bak 's/library_name = "digeo"/library_name = "digeo-test"/g' setup.py
         echo "Renamed package to digeo-test in setup.py"
 
     - name: Set up Python
