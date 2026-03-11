@@ -219,6 +219,8 @@ jobs:
 
   github-release:
     name: Sign the distribution with Sigstore and upload to GitHub Release
+    if: >-
+      github.event_name != 'pull_request'
     needs:
     - publish-to-pypi
     runs-on: ubuntu-latest
