@@ -45,7 +45,6 @@ jobs:
         echo "Renamed package to digeo-test in pyproject.toml"
         sed -i 's/library_name = "digeo"/library_name = "digeo-test"/g' setup.py
         echo "Renamed package to digeo-test in setup.py"
-        fi
 
     - name: Set up Python
       uses: actions/setup-python@v6
