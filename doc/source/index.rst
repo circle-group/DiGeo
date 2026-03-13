@@ -1,5 +1,7 @@
 :html_theme.sidebar_secondary.remove:
 
+.. title:: DiGeo
+
 .. image:: /_static/digeo.svg
    :alt: Digeo logo
    :align: center
