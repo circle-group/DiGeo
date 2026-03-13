@@ -6,8 +6,11 @@
 [![Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
 <p align="center">
-    <img src="doc/source/_static/digeo.svg" height="125" alt="Geodesic traces on a bunny mesh"/>
-    <!-- TODO: change this to url -->
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="doc/source/_static/digeo_dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="doc/source/_static/digeo.svg" />
+    <img src="doc/source/_static/digeo.svg" height="125" alt="Geodesic traces on a bunny mesh" />
+  </picture>
 </p>
 
 **DiGeo** (Differentiable Geometry) is a Python package designed to enable differential geometry in learning and optimisation applications on triangular meshes.

@@ -83,7 +83,7 @@ html_theme_options = {
     "pygments_dark_style": "monokai",
     "logo": {
         "image_light": "digeo.svg",
-        "image_dark": "digeo.svg",
+        "image_dark": "digeo_dark.svg",
     },
     "surface_warnings": True,
     # -- Template placement in theme layouts ----------------------------------
