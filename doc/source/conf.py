@@ -82,7 +82,8 @@ html_theme_options = {
     "pygments_light_style": "tango",
     "pygments_dark_style": "monokai",
     "logo": {
-        "text": "DiGeo",
+        "image_light": "digeo.svg",
+        "image_dark": "digeo.svg",
     },
     "surface_warnings": True,
     # -- Template placement in theme layouts ----------------------------------
@@ -113,3 +114,4 @@ html_theme_options = {
 
 html_static_path = ['_static']
 html_css_files = ['theme-overrides.css']
+html_favicon = '_static/icon.svg'

@@ -1,4 +1,3 @@
-# DiGeo
 
 [![PyPI version](https://badge.fury.io/py/digeo.svg)](https://badge.fury.io/py/digeo)
 [![Python Versions](https://img.shields.io/pypi/pyversions/digeo.svg)](https://pypi.org/project/digeo/)
@@ -6,15 +5,14 @@
 [![Tests](https://github.com/circle-group/digeo/actions/workflows/tests.yml/badge.svg)](https://github.com/circle-group/digeo/actions/workflows/tests.yml)
 [![Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
-**DiGeo** (Differentiable Geometry) is a Python package designed to enable differential geometry in learning and optimisation applications on triangular meshes.
-
-Built on PyTorch and custom CUDA kernels, DiGeo provides differentiable exponential map, parallel transport, and geodesic tracing as core operations, which are leveraged across the higher-level modules and examples in the package. It supports batched inputs, single and double precision, and runs on both CPU and GPU.
-
 <p align="center">
-    <img src="assets/geodesic_traces_bunny.png" height="400" alt="Geodesic traces on a bunny mesh"/>
+    <img src="doc/source/_static/digeo.svg" height="125" alt="Geodesic traces on a bunny mesh"/>
     <!-- TODO: change this to url -->
 </p>
 
+**DiGeo** (Differentiable Geometry) is a Python package designed to enable differential geometry in learning and optimisation applications on triangular meshes.
+
+Built on PyTorch and custom CUDA kernels, DiGeo provides differentiable exponential map, parallel transport, and geodesic tracing as core operations, which are leveraged across the higher-level modules and examples in the package. It supports batched inputs, single and double precision, and runs on both CPU and GPU.
 
 ## Key Features
 
