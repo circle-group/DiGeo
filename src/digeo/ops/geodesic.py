@@ -141,19 +141,19 @@ def trace_geodesics_gfd(
     return x1
 
 
-def trace_geodesics_jvp(
+def trace_geodesics_abfd(
     mesh: Mesh, x: MeshPointBatch, dirs: Tensor, kwargs: dict
 ) -> MeshPointBatch:
     """
     Compute the straightest geodesics on the mesh starting from point x with
     direction v.
-    This function is a wrapper for the StraighestGeodesicsJVP autograd function.
+    This function is a wrapper for the StraighestGeodesicsABFD autograd function.
     """
     # Project on the tangent plane
     normals = mesh.triangle_normals[x.faces]
     dirs = dirs - torch.sum(dirs * normals, dim=1, keepdim=True) * normals
 
-    x1_faces, x1_uvs = StraighestGeodesicsJVP.apply(mesh, x.faces, x.uvs, dirs, kwargs)
+    x1_faces, x1_uvs = StraighestGeodesicsABFD.apply(mesh, x.faces, x.uvs, dirs, kwargs)
     x1 = MeshPointBatch(faces=x1_faces, uvs=x1_uvs)
     return x1
 
@@ -308,8 +308,8 @@ class StraighestGeodesicsGFD(torch.autograd.Function):
         return None, None, grad_x0_uvs, grad_v, None
 
 
-class StraighestGeodesicsJVP(torch.autograd.Function):
-    EPS = 1e-1
+class StraighestGeodesicsABFD(torch.autograd.Function):
+    EPS = 1e-2
 
     @staticmethod
     def forward(
@@ -339,7 +339,7 @@ class StraighestGeodesicsJVP(torch.autograd.Function):
         x1 = MeshPointBatch(
             faces=x1_faces, uvs=x1_uvs
         )  # Reconstruct MeshPointBatch from saved tensors
-        eps = StraighestGeodesicsJVP.EPS
+        eps = StraighestGeodesicsABFD.EPS
 
         v_norm = v.norm(dim=-1, keepdim=True)
         v1 = v_norm * v1
@@ -502,6 +502,8 @@ def trace_geodesics(
     """
     Computes the straightest geodesic traces.
 
+    For a detailed description, see :ref:`straightest_geodesic` in the user guide.
+
     Parameters
     ----------
     mesh : Mesh
@@ -512,7 +514,7 @@ def trace_geodesics(
         The direction tensor (in 3d world coordinates)
     gradient : str,
         What method to compute the gradient, can be "none", "ep",
-        "jvp", or "gfd" (default: "gfd").
+        "abfd", or "gfd" (default: "gfd").
     use_python : bool,
         If the computation should be made with python, making it easier to debug
         (default: False).
@@ -541,6 +543,8 @@ def trace_geodesics(
     MeshPointBatch, GeodesicInfo
         The endpoints of the geodesic traces and geodesic information.
 
+    Examples
+    --------
     >>> mesh = load_mesh_from_file(path_to_mesh, device=device)
     >>> start_meshpoints = uniform_sampling(mesh, N).to(device)
     >>> start_directions = torch.randn((N, 3), dtype=torch.float32).to(device)
@@ -596,7 +600,7 @@ def trace_geodesics(
     with torch.no_grad():
         if not (
             gradient != "gfd"
-            or gradient != "jvp"
+            or gradient != "abfd"
             or debug
             or save_parallel_transport
             or save_end_direction
@@ -677,12 +681,12 @@ def trace_geodesics(
                 )
     elif gradient == "gfd":
         mesh_points = trace_geodesics_gfd(mesh, starts, dirs, kwargs)
-    elif gradient == "jvp":
-        mesh_points = trace_geodesics_jvp(mesh, starts, dirs, kwargs)
+    elif gradient == "abfd":
+        mesh_points = trace_geodesics_abfd(mesh, starts, dirs, kwargs)
     else:
         raise ValueError(
-            f"Unknown gradient method: {gradient}. Use 'none', 'ep' "
-            f"or 'gfd'."
+            f"Unknown gradient method: {gradient}. Use 'none', 'ep', "
+            f"'gfd', or 'abfd'."
         )
 
     # Compute parallel transport rotation if needed

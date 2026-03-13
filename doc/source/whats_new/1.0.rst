@@ -30,7 +30,7 @@ First version of DiGeo, with core functionalities for geodesic computations, mes
 :mod:`digeo.ops`
 ----------------
 
-- |Feature| :func:`ops.trace_geodesics` to trace straightest geodesics (exponential map) on meshes, with multiple gradient computation strategies: ``"none"``, ``"ep"`` (extrinsic proxy), ``"jvp"`` (Jacobian-vector product) and ``"gfd"`` (geodesic finite differences). See :ref:`differentiation_methods` for details.
+- |Feature| :func:`ops.trace_geodesics` to trace straightest geodesics (exponential map) on meshes, with multiple gradient computation strategies: ``"none"``, ``"ep"`` (Extrinsic Proxy), ``"gfd"`` (Geodesic Finite Differences) and ``"abfd"`` (Adjoint Backward Finite Differences). See :ref:`differentiation_methods` for details.
 
 - |Feature| :func:`ops.uniform_sampling` to uniformly sample points on the surface of a mesh.
 

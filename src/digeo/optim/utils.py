@@ -1,6 +1,6 @@
 import torch
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Any, Tuple
 from torch import Tensor
 
 from digeo import Mesh, MeshPointBatch
@@ -15,7 +15,7 @@ class MeshLossFunc(ABC):
     @abstractmethod
     def compute(self, mesh: Mesh, points: MeshPointBatch) -> Tuple[float, Tensor]:
         """
-        Loss function used in the mesh optimizers.
+        Loss function used in the mesh optimisers.
 
         Parameters
         ----------
@@ -33,7 +33,18 @@ class MeshLossFunc(ABC):
         """
         ...
 
-    def get_logs(self):
+    def get_logs(self) -> dict[str, Any]:
+        """
+        Optionnal method to return any additional information that should be logged
+        during optimization, such as the value of certain terms in the loss function,
+        or any other relevant information.
+
+        Returns
+        -------
+        logs: dict[str, Any]
+            A dictionary containing the information to log, where the keys are the
+            names of the metrics and the values are the corresponding values to log.
+        """
         return {}
 
 

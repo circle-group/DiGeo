@@ -82,7 +82,8 @@ html_theme_options = {
     "pygments_light_style": "tango",
     "pygments_dark_style": "monokai",
     "logo": {
-        "text": "DiGeo",
+        "image_light": "digeo.svg",
+        "image_dark": "digeo_dark.svg",
     },
     "surface_warnings": True,
     # -- Template placement in theme layouts ----------------------------------
@@ -113,3 +114,21 @@ html_theme_options = {
 
 html_static_path = ['_static']
 html_css_files = ['theme-overrides.css']
+html_favicon = '_static/icon.svg'
+
+
+def setup(app):
+    """Inject Google Analytics tag into every page head."""
+    app.add_js_file(
+        "https://www.googletagmanager.com/gtag/js?id=G-DRB46X154R",
+        **{"async": "async"},
+    )
+    app.add_js_file(
+        None,
+        body=(
+            "window.dataLayer = window.dataLayer || [];\n"
+            "function gtag(){dataLayer.push(arguments);}\n"
+            "gtag('js', new Date());\n"
+            "gtag('config', 'G-DRB46X154R');"
+        ),
+    )

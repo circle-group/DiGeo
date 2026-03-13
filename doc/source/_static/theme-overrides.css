@@ -6,6 +6,10 @@
   }
 }
 
+img[src$=".svg"] {
+    background: transparent !important;
+}
+
 .bd-article-container {
   max-width: 80rem !important;
 }
@@ -18,4 +22,35 @@
   background-color: transparent !important;
   border-bottom: none !important;
   padding-bottom: 0 !important;
+}
+
+.hero-logo {
+  text-align: center;
+}
+
+.hero-logo-img {
+  display: block;
+  margin: 0 auto 2rem;
+  max-width: 420px;
+  width: min(40%, 420px);
+}
+
+html[data-theme="dark"] .hero-logo-dark,
+html[data-mode="dark"] .hero-logo-dark {
+  display: block;
+}
+
+html[data-theme="dark"] .hero-logo-light,
+html[data-mode="dark"] .hero-logo-light {
+  display: none;
+}
+
+html[data-theme="light"] .hero-logo-dark,
+html[data-mode="light"] .hero-logo-dark {
+  display: none;
+}
+
+html[data-theme="light"] .hero-logo-light,
+html[data-mode="light"] .hero-logo-light {
+  display: block;
 }
