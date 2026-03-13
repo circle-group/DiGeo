@@ -6,6 +6,14 @@
   }
 }
 
+img[src$=".svg"] {
+    background: transparent !important;
+}
+
+.spaced-image {
+    margin-bottom: 2em;
+}
+
 .bd-article-container {
   max-width: 80rem !important;
 }
