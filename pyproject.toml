@@ -33,7 +33,8 @@ classifiers = [
 [project.optional-dependencies]
 test = [
     "pytest",
-    "potpourri3d"
+    "potpourri3d",
+    "ruff"
 ]
 doc = [
     "sphinx",
