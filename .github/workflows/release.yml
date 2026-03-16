@@ -3,7 +3,7 @@ name: Release to PyPI
 on:
   push:
     tags:
-      - '**'
+      - 'v*'
   pull_request:
       types: [opened, synchronize, reopened, edited, labeled]
   workflow_dispatch:
