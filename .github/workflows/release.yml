@@ -177,9 +177,7 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
 
   github-release:
-    name: >-
-      Sign the distribution with Sigstore
-      and upload them to GitHub Release
+    name: Sign the sdist and upload to GitHub Release
     needs:
     - publish-to-pypi
     runs-on: ubuntu-latest
@@ -194,42 +192,27 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Download all the dists
-      uses: actions/download-artifact@v8
-      with:
-        pattern: python-package-*
-        merge-multiple: true
-        path: dist
-
     - name: Build sdist
       run: pipx run build --sdist --outdir dist
 
     - name: Verify dist folder
       run: ls -al dist/
 
-    - name: Sign the dists with Sigstore
+    - name: Sign the sdist with Sigstore
       uses: sigstore/gh-action-sigstore-python@v3.2.0
       with:
-        inputs: >-
-          ./dist/*.tar.gz
-          ./dist/*.whl
+        inputs: ./dist/*.tar.gz
+
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      run: >-
-        gh release create
-        "$GITHUB_REF_NAME"
-        --repo "$GITHUB_REPOSITORY"
-        --notes ""
-
-    - name: Upload artifact signatures to GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      # Upload to GitHub Release using the `gh` CLI.
-      # `dist/` contains the built packages, and the
-      # sigstore-produced signatures and certificates.
-      run: >-
-        gh release upload
-        "$GITHUB_REF_NAME" dist/**
-        --repo "$GITHUB_REPOSITORY"
+      run: |
+        gh release create \
+          "$GITHUB_REF_NAME" \
+          ./dist/*.tar.gz \
+          --title "Release ${{ steps.version.outputs.VERSION }}" \
+          --notes ""
