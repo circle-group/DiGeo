@@ -16,7 +16,7 @@ The necessary libraries will be installed automatically via ``pip``.
 Standard Installation (via pip)
 --------------------------------
 
-The easiest way to install the latest stable release is through PyPI. The wheels are precompiled using Pytorch 2.10 and CUDA 12.8.
+The easiest way to install the latest stable release is through PyPI. The wheels are precompiled using **Pytorch 2.10 and CUDA 12.8**.
 
 .. code-block:: bash
 
@@ -48,4 +48,10 @@ To install version x.y.z of DiGeo from source:
 
 .. code-block:: bash
 
-   pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z" --no-build-isolation
+   pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@vx.y.z" --no-build-isolation
+
+For example, to install version 1.2.3:
+
+.. code-block:: bash
+
+   pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@v1.2.3" --no-build-isolation

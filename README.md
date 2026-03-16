@@ -36,7 +36,7 @@ Before installing `DiGeo`, ensure you have a compatible python version, the nece
 
 ### Standard Installation (via pip)
 
-The easiest way to install the latest stable release is through PyPI. The wheels are precompiled using Pytorch 2.10 and CUDA 12.8.
+The easiest way to install the latest stable release is through PyPI. The wheels are precompiled using **Pytorch 2.10 and CUDA 12.8**.
 
 ```bash
 pip install torch==2.10 --index-url https://download.pytorch.org/whl/cu128
@@ -59,9 +59,13 @@ pip install digeo
 
 To install version x.y.z of DiGeo from source:
 ```bash
-pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@x.y.z" --no-build-isolation
+pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@vx.y.z" --no-build-isolation
 ```
 
+For example, to install version 1.2.3:
+```bash
+pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@v1.2.3" --no-build-isolation
+```
 
 ## Citing
 
