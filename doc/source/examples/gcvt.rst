@@ -1,6 +1,8 @@
 Voronoi Tessellation
 ====================
 
+The full implementation of the GCVT is available on the `DSG-Applications repository <https://github.com/circle-group/DSG-Applications>`_.
+
 This example demonstrates how to perform **Geodesic Centroidal Voronoi Tessellation (GCVT)** on 3D meshes using the ``Mesh-LBFGS`` second-order optimiser provided by this library.
 
 .. figure:: /_static/gcvt_examples.png
@@ -74,6 +76,3 @@ Once the loss function is defined, we can initialize the seed positions and run 
     loss_func = LossGCVT(mesh)
 
     seeds, logs = mesh_lbfgs(mesh, initial_seeds, loss_func)
-
-
-The full implementation of the GCVT example is available on the `GCVT GitHub repository <https://github.com/Etyl/GCVT>`_

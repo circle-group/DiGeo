@@ -1,6 +1,8 @@
 MeshFlow
 ========
 
+The full implementation of MeshFlow is available on the `DSG-Applications repository <https://github.com/circle-group/DSG-Applications>`_.
+
 .. figure:: /_static/duck_distrib.svg
     :align: center
     :width: 70%
@@ -46,5 +48,3 @@ Implementation
 --------------
 
 To implement this, the neural network uses a Multi-Layer Perceptron (MLP) that takes the 3D position of the samples as input and outputs the corresponding tangent vector. Because the differentiable exponential map operates intrinsically, it allows points to move directly along the surface of the mesh without introducing any projection errors during the transport process.
-
-The full implementation is available on the `MeshFlow GitHub repository <https://github.com/Etyl/MeshFlow>`_.
