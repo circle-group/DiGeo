@@ -67,6 +67,10 @@ For example, to install version 1.2.3:
 pip install "digeo @ git+ssh://git@github.com/circle-group/DiGeo.git@v1.2.3" --no-build-isolation
 ```
 
+## Examples
+
+You can find some applications using DiGeo on the [DSG-Applications repository](https://github.com/circle-group/DSG-Applications). These applications make use of the differentiable straightest geodesics and parallel transport provided by DiGeo, as well as the Biharmonic Distance, AGC layers, and mesh optimisers.
+
 ## Citing
 
 If you use `DiGeo` in your research, please consider citing the following paper:
