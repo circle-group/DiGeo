@@ -170,7 +170,7 @@ class AGC(nn.Module):
             mesh=mesh,
             starts=start_vertices,  # [V * num_traces * n_patches]
             dirs=directions.contiguous().view(-1, 3),  # [V * num_traces * n_patches, 3]
-            gradient="parallel_transport" if self.learn_rho else "none",
+            gradient="ep" if self.learn_rho else "none",
         )
 
         tri_idx = meshpoints.faces  # [V * num_traces * n_patches]
