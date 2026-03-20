@@ -29,7 +29,7 @@ Built on PyTorch and custom CUDA kernels, DiGeo provides differentiable exponent
 
 ### Dependencies
 
-Before installing `DiGeo`, ensure you have a compatible python version, the necessary libraries will be installed automatically via pip:
+Before installing DiGeo, ensure you have a compatible python version, the necessary libraries will be installed automatically via pip:
 
 * **Python:** $\ge$ 3.10
 * **Libraries:** `Pytorch`, `NumPy`, `tqdm`, `SciPy`, `Trimesh`, `Robust Laplacian`
@@ -47,7 +47,7 @@ pip install digeo
 
 ### Platform & Hardware Support
 
-`DiGeo` utilizes custom CUDA kernels. Please note the following hardware limitations for the `pip` installation:
+DiGeo utilizes custom CUDA kernels. Please note the following hardware limitations for the `pip` installation:
 
 * **Linux (x86_64) and Windows (ARM64):** Includes pre-compiled CUDA kernels.
 * **Linux (ARM64) and macOS:** `pip` will default to a **CPU-only** version. For GPU support, you will need to build the package from source.
@@ -73,7 +73,7 @@ You can find some applications using DiGeo on the [DSG-Applications repository](
 
 ## Citing
 
-If you use `DiGeo` in your research, please consider citing the following paper:
+If you use DiGeo in your research, please consider citing the following paper:
 
 ```
 @inproceedings{verninas2026disgeod,
