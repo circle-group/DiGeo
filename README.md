@@ -7,9 +7,9 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="doc/source/_static/digeo_dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="doc/source/_static/digeo.svg" />
-    <img src="doc/source/_static/digeo.svg" height="125" alt="Geodesic traces on a bunny mesh" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/circle-group/DiGeo/56d3663e6778e88b8d4b10e0b5991990e3d516fb/doc/source/_static/digeo_dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/circle-group/DiGeo/56d3663e6778e88b8d4b10e0b5991990e3d516fb/doc/source/_static/digeo.svg" />
+    <img src="https://raw.githubusercontent.com/circle-group/DiGeo/56d3663e6778e88b8d4b10e0b5991990e3d516fb/doc/source/_static/digeo.svg" height="125" alt="DiGeo logo" />
   </picture>
 </p>
 
