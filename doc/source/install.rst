@@ -6,7 +6,7 @@ Installation
 Dependencies
 ------------
 
-Before installing ``DiGeo``, ensure you have a compatible Python version.
+Before installing DiGeo, ensure you have a compatible Python version.
 The necessary libraries will be installed automatically via ``pip``.
 
 - **Python:** >= 3.10
@@ -31,8 +31,7 @@ The easiest way to install the latest stable release is through PyPI. The wheels
 Platform & Hardware Support
 ---------------------------
 
-``DiGeo`` utilizes custom CUDA kernels. Please note the following hardware
-limitations for the ``pip`` installation:
+DiGeo utilizes custom CUDA kernels. Please note the following hardware limitations for the ``pip`` installation:
 
 - **Linux (x86_64) and Windows (ARM64):** Includes pre-compiled CUDA kernels.
 - **Linux (ARM64) and macOS:** ``pip`` will default to a **CPU-only** version. For GPU support, you will need to build the package from source.

@@ -1,6 +1,8 @@
 Shape segmentation
 ==================
 
+The full implementation of the AGC U-ResNet segmentation is available on the `DSG-Applications repository <https://github.com/circle-group/DSG-Applications>`_.
+
 .. figure:: /_static/agc_seg.png
     :align: center
     :width: 50%
@@ -27,5 +29,3 @@ The ResNet stacks used in the AGC U-ResNet architecture consist of two AGC block
     :width: 50%
 
     The ResNet block used in the AGC U-ResNet architecture.
-
-The full implementation of the AGC U-ResNet architecture is available on the `AGC GitHub repository <https://github.com/Etyl/AGC>`_
