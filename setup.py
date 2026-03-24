@@ -72,6 +72,9 @@ def get_extensions():
     extensions_dir = Path("src/digeo/ops/cuda")
     sources = list(extensions_dir.glob("*.cpp"))
     cuda_sources = list(extensions_dir.glob("*.cu"))
+    print(f"Found C++ sources: {[str(s) for s in sources]}")
+    if use_cuda:
+        print(f"Found CUDA sources: {[str(s) for s in cuda_sources]}")
 
     if use_cuda:
         sources += cuda_sources
