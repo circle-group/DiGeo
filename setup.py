@@ -78,7 +78,7 @@ def get_extensions():
 
     ext_modules = [
         extension(
-            f"{library_name}/ops/cuda/._C",
+            f"{library_name}.ops.cuda._C",
             sources,
             extra_compile_args=extra_compile_args,
             extra_link_args=extra_link_args,
