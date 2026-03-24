@@ -27,7 +27,7 @@ jobs:
         python3 -m pip install --no-build-isolation .[test]
     - name: Test with pytest
       run: |
-        pytest -v
+        python -m pytest -v
 
   report_test:
     if: ${{ always() }}
