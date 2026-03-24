@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip setuptools wheel build torch numpy
-        python3 -m pip install -v --no-build-isolation .[test]
+        python3 -m pip install -v --no-build-isolation -e .[test]
     - name: Test with pytest
       run: |
         python -m pytest -v
