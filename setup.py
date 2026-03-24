@@ -1,6 +1,6 @@
 import os
-import glob
 import sys
+from pathlib import Path
 
 from setuptools import setup
 from torch.utils.cpp_extension import (
@@ -69,9 +69,9 @@ def get_extensions():
         extra_compile_args["nvcc"] += ["-DUSE_CUDA"]
 
     # Sources
-    extensions_dir = "src/digeo/ops/cuda"
-    sources = list(glob.glob(os.path.join(extensions_dir, "*.cpp")))
-    cuda_sources = list(glob.glob(os.path.join(extensions_dir, "*.cu")))
+    extensions_dir = Path("src/digeo/ops/cuda")
+    sources = list(extensions_dir.glob("*.cpp"))
+    cuda_sources = list(extensions_dir.glob("*.cu"))
 
     if use_cuda:
         sources += cuda_sources
