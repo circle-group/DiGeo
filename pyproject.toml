@@ -30,6 +30,12 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
+[project.urls]
+homepage = "https://digeo.readthedocs.io"
+source = "https://github.com/circle-group/DiGeo"
+download = "https://pypi.org/project/digeo/#files"
+tracker = "https://github.com/circle-group/DiGeo/issues"
+
 [project.optional-dependencies]
 test = [
     "pytest",
