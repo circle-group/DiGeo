@@ -19,8 +19,8 @@ The method takes as input a mesh, a batch of points, and directions to trace the
 
 .. code-block:: python
 
-    from digeo import trace_geodesics, uniform_sampling, load_mesh_from_file
-    from digeo.utils import length
+    from digeo import load_mesh_from_file
+    from digeo.ops import trace_geodesics, uniform_sampling
 
     # Load a mesh
     mesh = load_mesh_from_file("path/to/mesh.obj")

@@ -4,8 +4,6 @@ from typing import Tuple, Optional
 
 from digeo.mesh import Mesh, MeshPointBatch
 
-__all__ = ["straightest_geodesics"]
-
 
 def straightest_geodesics(
     mesh: Mesh,

@@ -53,9 +53,6 @@ doc = [
 [tool.setuptools.dynamic]
 version = {attr = "digeo.__version__"}
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
 [tool.cibuildwheel]
 skip = ["*cp314t*"]
 build = [
