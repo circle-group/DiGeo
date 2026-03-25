@@ -7,7 +7,7 @@
 
 #define CT_CUDA_DEBUG 0
 
-extern "C" PyObject* PyInit__C(void) {
+PyMODINIT_FUNC PyInit__C(void) {
     static PyModuleDef module_def = {
         PyModuleDef_HEAD_INIT,
         "_C", /* name of module */
