@@ -50,8 +50,10 @@ def uniform_sampling(mesh: Mesh, n_points: int) -> MeshPointBatch:
         faces = torch.cat(faces, dim=0)
 
         # Generate random uniform barycentric coordinates
-        u = torch.rand(n_points * len(mesh), dtype=torch.float32)
-        v = (1 - u) * torch.rand(n_points * len(mesh), dtype=torch.float32)
+        r1 = torch.sqrt(torch.rand(n_points * len(mesh), dtype=torch.float32))
+        r2 = torch.rand(n_points * len(mesh), dtype=torch.float32)
+        u = 1 - r1
+        v = r1 * r2
         uvs = torch.stack((u, v), dim=1)
 
         return MeshPointBatch(faces=faces, uvs=uvs)
@@ -64,8 +66,10 @@ def uniform_sampling(mesh: Mesh, n_points: int) -> MeshPointBatch:
         triangle_id = torch.tensor(triangle_id_np, dtype=torch.int32)
 
         # Generate random uniform barycentric coordinates
-        u = torch.rand(n_points, dtype=torch.float32)
-        v = (1 - u) * torch.rand(n_points, dtype=torch.float32)
+        r1 = torch.sqrt(torch.rand(n_points, dtype=torch.float32))
+        r2 = torch.rand(n_points, dtype=torch.float32)
+        u = 1 - r1
+        v = r1 * r2
         uvs = torch.stack((u, v), dim=1)
 
         return MeshPointBatch(faces=triangle_id, uvs=uvs)
