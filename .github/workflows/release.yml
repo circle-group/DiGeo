@@ -59,6 +59,7 @@ jobs:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_LINUX: "auto"
         CIBW_SKIP: "*musl*"
+        CIBW_BUILD_FRONTEND: "pip; args: --no-build-isolation"
         CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
           auditwheel repair -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10*
 
@@ -81,6 +82,8 @@ jobs:
             echo "ARM64 architecture detected. Skipping CUDA toolkit installation.";
           fi
 
+        CIBW_BEFORE_BUILD: pip install "setuptools>=77.0.3" wheel "torch==2.10.*"
+
         # Dynamically toggle USE_CUDA based on runner hardware, and add CUDA_HOME
         CIBW_ENVIRONMENT: >
           USE_CUDA=${{ runner.arch == 'X64' && '1' || '0' }}
@@ -88,6 +91,7 @@ jobs:
           PATH=$PATH:/usr/local/cuda-12.8/bin
           TORCH_CUDA_ARCH_LIST='7.5;8.0;8.6;8.9;9.0+PTX'
           PIP_NO_CACHE_DIR=1
+          PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"
 
     - name: Build macOS CPU Wheels
       if: runner.os == 'macOS'
@@ -95,8 +99,10 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_MACOS: "x86_64 arm64"
+        CIBW_BUILD_FRONTEND: "pip; args: --no-build-isolation"
         CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
           delocate-wheel -w {dest_dir} {wheel} --exclude libtorch* --exclude libc10* --ignore-missing-dependencies
+        CIBW_BEFORE_BUILD: pip install "setuptools>=77.0.3" wheel "torch==2.10.*"
         CIBW_ENVIRONMENT: "USE_CUDA=0"
 
     - name: Install CUDA Toolkit on Windows
@@ -130,7 +136,8 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ARCHS_WINDOWS: "auto"
-        CIBW_BEFORE_BUILD: "pip install ninja"
+        CIBW_BUILD_FRONTEND: "pip; args: --no-build-isolation"
+        CIBW_BEFORE_BUILD: pip install "setuptools>=77.0.3" wheel ninja "torch==2.10.*"
         CIBW_ENVIRONMENT: >
           USE_CUDA=1
           CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
