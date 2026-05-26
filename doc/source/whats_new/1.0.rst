@@ -9,6 +9,14 @@ Version 1.0
 .. include:: badges.inc
 
 
+Version 1.0.1
+=============
+
+**May 2026**
+
+Released new version because of naming conflict in pypi.
+
+
 Version 1.0.0
 =============
 
