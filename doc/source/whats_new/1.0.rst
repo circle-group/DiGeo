@@ -12,7 +12,7 @@ Version 1.0
 Version 1.0.0
 =============
 
-**In development**
+**May 2026**
 
 First version of DiGeo, with core functionalities for geodesic computations, mesh handling, and differentiable optimization on meshes. By :user:`Hippolyte Verninas <Etyl>`, :user:`Caner Korkmaz <Kausta>`, Stefanos Zafeiriou, :user:`Tolga Birdal <tolgabirdal>` and :user:`Simone Foti <simofoti>`.
 
@@ -32,7 +32,7 @@ First version of DiGeo, with core functionalities for geodesic computations, mes
 
 - |Feature| :func:`ops.trace_geodesics` to trace straightest geodesics (exponential map) on meshes, with multiple gradient computation strategies: ``"none"``, ``"ep"`` (Extrinsic Proxy), ``"gfd"`` (Geodesic Finite Differences) and ``"abfd"`` (Adjoint Backward Finite Differences). See :ref:`differentiation_methods` for details.
 
-- |Feature| :func:`ops.uniform_sampling` to uniformly sample points on the surface of a mesh.
+- |Feature| :func:`ops.uniform_sampling` to uniformly sample points on the surface of a mesh. Fixed by :user:`Kim-Chan Tze Hui, Louiz <zioul123>`.
 
 
 :mod:`digeo.nn`

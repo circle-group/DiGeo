@@ -23,7 +23,7 @@
    user_guide/index
    api
    examples/index
-   .. whats_new
+   whats_new
 
 
 Examples
